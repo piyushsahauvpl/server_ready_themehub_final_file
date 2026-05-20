@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/static/css/main.246e1dad.css",
+    "main.js": "/static/js/main.2075a8a3.js",
+    "static/media/blogimage.png": "/static/media/blogimage.c57443a32024ae31c1cc.png",
+    "static/media/aboutimg.png": "/static/media/aboutimg.5d21c32bcff1d7c70f1c.png",
+    "static/media/contactimg.png": "/static/media/contactimg.a48bbffb834dfc8e4d8e.png",
+    "static/media/categoriesimg.png": "/static/media/categoriesimg.b55ae46c11a14f09f0c6.png",
+    "static/media/banner-2.png": "/static/media/banner-2.e5c0cf6d4308e8794072.png",
+    "static/media/wordpress.jpg": "/static/media/wordpress.bc1c483644aaa7c52baf.jpg",
+    "static/media/themehublogo.png": "/static/media/themehublogo.acd9d30d74bfc32df8ae.png",
+    "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.8ae0d37556ff1e685de2.woff2",
+    "static/media/banner.jpg": "/static/media/banner.2941a102d20731b802b3.jpg",
+    "static/media/Theme Hub Logo white.png": "/static/media/Theme Hub Logo white.5a02ff23d1677292cfc6.png",
+    "static/media/html.jpg": "/static/media/html.b190bc022d021d7544ca.jpg",
+    "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.1c5c7716b05754cb4eab.woff2",
+    "static/media/BG..2nn.jpg": "/static/media/BG..2nn.caa437d472c28f98207f.jpg",
+    "static/media/react.jpg": "/static/media/react.c69d82faeff04e7e50f5.jpg",
+    "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.6f05ca9ab7b5345dbc07.woff2",
+    "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.e4340c52a50e727c6afa.woff2",
+    "index.html": "/index.html",
+    "main.246e1dad.css.map": "/static/css/main.246e1dad.css.map",
+    "main.2075a8a3.js.map": "/static/js/main.2075a8a3.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.246e1dad.css",
+    "static/js/main.2075a8a3.js"
+  ]
+}

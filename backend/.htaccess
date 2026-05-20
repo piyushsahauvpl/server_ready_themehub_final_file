@@ -1,0 +1,42 @@
+# PHP Configuration via .htaccess
+# Increase upload limits for product files
+
+<IfModule mod_php.c>
+    php_value upload_max_filesize 100M
+    php_value post_max_size 100M
+    php_value max_file_uploads 1000
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 512M
+</IfModule>
+
+# Set CORS headers for local development when mod_headers is available
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "http://localhost:3000"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept"
+    Header set Access-Control-Allow-Credentials "true"
+</IfModule>
+
+# Allow direct access to uploads directory
+Options +FollowSymLinks
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /Frontend/backend/
+
+    # Ensure Authorization header is preserved and available to PHP (for Bearer tokens)
+    # This prevents Apache / PHP from stripping the header when using PHP-FPM or certain configs
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    
+    # Allow all existing files and directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # Route API requests through index if needed
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

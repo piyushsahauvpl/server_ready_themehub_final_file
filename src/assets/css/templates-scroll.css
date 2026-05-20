@@ -1,0 +1,86 @@
+/* Image scroll effect for product cards on templates page */
+.product-card .product-media .image-scroll-container {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-card .product-media .image-scroll-container img {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  animation: templateImageAutoScroll 10s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.product-card:hover .product-media .image-scroll-container img {
+  animation-play-state: paused;
+}
+
+/* Image scroll effect for template cards (list view) on templates page */
+.template-card .template-image .image-scroll-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.template-card .template-image .image-scroll-container img {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  animation: templateListImageAutoScroll 10s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.template-card:hover .template-image .image-scroll-container img {
+  animation-play-state: paused;
+}
+
+/* Image scroll effect for ra-card (AllCategories page) */
+.ra-card .image-scroll-container {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ra-card .image-scroll-container img {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  transition: transform 8s ease-in-out;
+  will-change: transform;
+}
+
+.ra-card:hover .image-scroll-container img {
+  transform: translateY(calc(-100% + 220px));
+}
+
+@keyframes templateImageAutoScroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% + 220px));
+  }
+}
+
+@keyframes templateListImageAutoScroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% + 200px));
+  }
+}

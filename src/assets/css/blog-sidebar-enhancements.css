@@ -1,0 +1,49 @@
+/* Enhanced Search Box Styling for Sidebar */
+.sidebar .search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f9fafb;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.sidebar .search-box:focus-within {
+  border-color: #04733c;
+  box-shadow: 0 0 0 3px rgba(4, 115, 60, 0.1);
+  background: #ffffff;
+}
+
+.sidebar .search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: #111827;
+  flex: 1;
+  width: 100%;
+}
+
+.sidebar .search-box input::placeholder {
+  color: #9ca3af;
+}
+
+.sidebar .search-btn {
+  background: #04733c;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sidebar .search-btn:hover {
+  background: #035a2f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(4, 115, 60, 0.3);
+}

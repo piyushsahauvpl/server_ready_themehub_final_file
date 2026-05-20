@@ -1,0 +1,113 @@
+.top-navbar {
+  background:
+    radial-gradient(circle at 18% 50%, rgba(255, 255, 255, 0.15), transparent 24%),
+    linear-gradient(90deg, #036934 0%, #07984a 48%, #18b968 100%);
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.top-navbar-inner {
+  max-width: 1400px;
+  min-height: 42px;
+  margin: 0 auto;
+  padding: 0 28px;
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+}
+
+.top-navbar-contact,
+.top-navbar-social,
+.top-navbar-note {
+  display: flex;
+  align-items: center;
+}
+
+.top-navbar-contact {
+  gap: 9px;
+}
+
+.top-navbar-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.top-navbar-contact a,
+.top-navbar-social a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.top-navbar-contact a {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.top-navbar-note {
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.top-navbar-social {
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.top-navbar-social a {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.top-navbar-social a:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .top-navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    gap: 16px;
+  }
+
+  .top-navbar-note {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .top-navbar-inner {
+    padding: 10px 14px;
+    gap: 12px;
+  }
+
+  .top-navbar-contact a {
+    font-size: 12px;
+  }
+
+  .top-navbar-social {
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}

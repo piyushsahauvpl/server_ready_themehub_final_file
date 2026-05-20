@@ -1,0 +1,714 @@
+/* ═══════════════════════════════════════════════════════════
+   BASE — DESKTOP / LAPTOP  (> 900px)
+   ═══════════════════════════════════════════════════════════ */
+ 
+.site-footer-redesign.footer {
+  position: relative;
+  overflow: clip;
+  overflow-clip-margin: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 0;
+  padding: 54px 0 24px;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(35, 218, 124, 0.2), transparent 26%),
+    radial-gradient(circle at 88% 22%, rgba(255, 255, 255, 0.1), transparent 22%),
+    linear-gradient(135deg, #052416 0%, #063d22 42%, #07984a 100%) !important;
+  color: #fff;
+}
+ 
+.site-footer-redesign,
+.site-footer-redesign * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+ 
+.site-footer-redesign::-webkit-scrollbar,
+.site-footer-redesign *::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+ 
+.site-footer-redesign .footer-container {
+  max-width: 1400px;
+  max-height: none !important;
+  width: 100%;
+  padding: 0 52px;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  overflow: visible !important;
+}
+ 
+.footer-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(2px);
+}
+ 
+.footer-glow-one {
+  width: 330px;
+  height: 330px;
+  left: -120px;
+  bottom: -130px;
+  background: rgba(35, 218, 124, 0.16);
+}
+ 
+.footer-glow-two {
+  width: 240px;
+  height: 240px;
+  right: 6%;
+  top: -110px;
+  background: rgba(255, 255, 255, 0.12);
+}
+ 
+/* ─── TOP STRIP ─────────────────────────────────────────── */
+.site-footer-redesign .footer-top-strip {
+  min-height: 112px;
+  margin-bottom: 38px;
+  padding: 24px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  backdrop-filter: blur(12px);
+}
+ 
+.site-footer-redesign .footer-pill {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #c6ffd9;
+  padding: 4px 12px;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  margin-bottom: 12px;
+}
+ 
+.site-footer-redesign .footer-top-strip h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 25px;
+  line-height: 1.25;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+ 
+.site-footer-redesign .footer-top-cta {
+  min-width: 172px;
+  min-height: 46px;
+  border-radius: 999px;
+  background: #fff;
+  color: #04783b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+ 
+.site-footer-redesign .footer-top-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.2);
+}
+ 
+/* ─── CONTENT GRID (desktop 5-col) ───────────────────────── */
+.site-footer-redesign .footer-content {
+  display: grid;
+  grid-template-columns: 1.35fr 0.7fr 0.7fr 0.7fr 1fr;
+  gap: 30px;
+  align-items: start;
+  position: relative;
+  z-index: 2;
+  max-height: none !important;
+  overflow: visible !important;
+}
+ 
+.site-footer-redesign .footer-col {
+  color: rgba(255, 255, 255, 0.9);
+  max-height: none !important;
+  overflow: visible !important;
+  /* reset any flex from smaller breakpoints */
+  display: block;
+  align-items: unset;
+  text-align: left;
+}
+ 
+.site-footer-redesign .footer-brand-col {
+  padding-right: 20px;
+  display: block;
+  text-align: left;
+}
+ 
+.site-footer-redesign .footer-logo-link {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 14px;
+  justify-content: flex-start;
+}
+ 
+.site-footer-redesign .footer-logo-link img {
+  width: 160px;
+  height: auto;
+  display: block;
+  margin-top: -33px;
+}
+ 
+.site-footer-redesign .footer-col p {
+  margin: 0 0 18px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 14px;
+  line-height: 1.7;
+  font-weight: 600;
+  text-align: left;
+}
+ 
+/* ─── SOCIAL LINKS ───────────────────────────────────────── */
+.site-footer-redesign .social-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+ 
+.site-footer-redesign .social-links a {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+ 
+.site-footer-redesign .social-links a:hover {
+  background: #fff;
+  color: #04783b;
+  transform: translateY(-2px);
+}
+ 
+/* ─── COLUMN HEADINGS ────────────────────────────────────── */
+.site-footer-redesign .footer-col h4 {
+  margin: 0 0 18px;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0;
+  display: block;
+  text-align: left;
+  align-self: stretch;
+}
+ 
+/* Kill any h4 underline bar from other stylesheets */
+.site-footer-redesign .footer-col h4::after {
+  display: none !important;
+  content: none !important;
+}
+ 
+/* ─── LINK LISTS ─────────────────────────────────────────── */
+.site-footer-redesign .footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 11px;
+  align-items: unset;
+  width: auto;
+}
+ 
+.site-footer-redesign .footer-col ul li {
+  margin: 0;
+  display: block;
+}
+ 
+/* No bullet dots on desktop */
+.site-footer-redesign .footer-col ul li::before {
+  display: none;
+  content: none;
+}
+ 
+.site-footer-redesign .footer-col ul li a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
+  text-align: left;
+}
+ 
+.site-footer-redesign .footer-col ul li a:hover {
+  color: #fff;
+  transform: translateX(3px);
+}
+ 
+/* ─── TEMPLATE GRID ──────────────────────────────────────── */
+.site-footer-redesign .footer-templates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  max-width: none;
+  width: auto;
+}
+ 
+/* All 6 cards visible on desktop */
+.site-footer-redesign .footer-templates a {
+  display: block !important;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  aspect-ratio: 1.2;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  width: auto;
+  height: auto;
+}
+ 
+.site-footer-redesign .footer-templates a:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.42);
+}
+ 
+.site-footer-redesign .template-thumb {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+ 
+/* ─── FOOTER BOTTOM ──────────────────────────────────────── */
+.site-footer-redesign .footer-bottom {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.13);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 16px;
+  text-align: left;
+  max-height: none !important;
+  overflow: visible !important;
+}
+ 
+.site-footer-redesign .footer-bottom p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 700;
+}
+ 
+.site-footer-redesign .footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+ 
+.site-footer-redesign .footer-bottom-links a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  transition: color 0.2s ease;
+}
+ 
+.site-footer-redesign .footer-bottom-links a:hover {
+  color: #fff;
+}
+ 
+/* ═══════════════════════════════════════════════════════════
+   LARGE TABLET  (≤ 1100px)  — still 5-col, tighter spacing
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .site-footer-redesign .footer-container {
+    padding: 0 34px !important;
+  }
+ 
+  .site-footer-redesign .footer-content {
+    grid-template-columns: 1.2fr 0.75fr 0.75fr 0.75fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+ 
+  .site-footer-redesign .footer-brand-col {
+    grid-row: unset;
+    padding-right: 12px;
+  }
+}
+ 
+/* ═══════════════════════════════════════════════════════════
+   TABLET  (≤ 900px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .site-footer-redesign.footer {
+    padding: 44px 0 28px !important;
+  }
+ 
+  .site-footer-redesign .footer-container {
+    padding: 0 26px !important;
+  }
+ 
+  /* Top strip stacks */
+  .site-footer-redesign .footer-top-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px;
+  }
+ 
+  .site-footer-redesign .footer-top-cta {
+    width: 100%;
+    min-width: unset;
+    justify-content: center;
+  }
+ 
+  /* 3-col grid: brand full-width row1, 3 link cols row2, templates full-width row3 */
+  .site-footer-redesign .footer-content {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    column-gap: 28px !important;
+    row-gap: 32px !important;
+    align-items: start !important;
+  }
+ 
+  /* Brand: full-width, centered */
+  .site-footer-redesign .footer-brand-col {
+    grid-column: 1 / -1 !important;
+    grid-row: unset !important;
+    padding-right: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+ 
+  .site-footer-redesign .footer-brand-col .footer-logo-link {
+    justify-content: center;
+  }
+ 
+  .site-footer-redesign .footer-brand-col p {
+    text-align: center !important;
+    max-width: 360px;
+  }
+ 
+  .site-footer-redesign .footer-brand-col .social-links {
+    justify-content: center;
+  }
+ 
+  /* All cols: flex column centered */
+  .site-footer-redesign .footer-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+ 
+  /* Headings centered */
+  .site-footer-redesign .footer-col h4 {
+    text-align: center !important;
+    display: block !important;
+    margin-bottom: 18px;
+  }
+ 
+  /* Lists: centered block, left-aligned items with bullet */
+  .site-footer-redesign .footer-col ul {
+    gap: 13px !important;
+    align-items: flex-start !important;
+    width: fit-content !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+ 
+  .site-footer-redesign .footer-col ul li {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+ 
+  .site-footer-redesign .footer-col ul li::before {
+    content: "" !important;
+    display: inline-block !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.45) !important;
+    flex-shrink: 0 !important;
+  }
+ 
+  .site-footer-redesign .footer-col ul li a {
+    display: inline !important;
+  }
+ 
+  /* Templates: full-width row, centered, 6-col */
+  .site-footer-redesign .footer-col:last-child {
+    grid-column: 1 / -1 !important;
+    align-items: center !important;
+  }
+ 
+  .site-footer-redesign .footer-col:last-child h4 {
+    text-align: center;
+    width: 100%;
+    display: block !important;
+    align-self: stretch !important;
+  }
+ 
+  .site-footer-redesign .footer-templates {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    max-width: 520px !important;
+    width: 100% !important;
+  }
+ 
+  .site-footer-redesign .footer-templates a {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+  }
+ 
+  /* Footer bottom centered */
+  .site-footer-redesign .footer-bottom {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+ 
+  .site-footer-redesign .footer-bottom-links {
+    justify-content: center !important;
+  }
+}
+ 
+/* ═══════════════════════════════════════════════════════════
+   MOBILE  (≤ 767px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .site-footer-redesign.footer {
+    padding: 38px 0 22px !important;
+  }
+ 
+  .site-footer-redesign .footer-container {
+    padding: 0 18px !important;
+  }
+ 
+  .site-footer-redesign .footer-top-strip {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 22px;
+    gap: 20px;
+    min-height: unset;
+  }
+ 
+  .site-footer-redesign .footer-top-strip h3 {
+    font-size: 22px;
+  }
+ 
+  .site-footer-redesign .footer-top-cta {
+    width: 100%;
+    min-width: unset;
+    min-height: 50px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+ 
+  /* 2-col grid:
+     row 1 = Brand (full-width)
+     row 2 = Marketplace | Company
+     row 3 = Legal | Templates        */
+  .site-footer-redesign .footer-content {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 28px 20px !important;
+  }
+ 
+  /* Brand full-width centered */
+  .site-footer-redesign .footer-brand-col {
+    padding-right: 0 !important;
+    grid-column: 1 / -1 !important;
+    margin-bottom: 4px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+ 
+  .site-footer-redesign .footer-brand-col .footer-logo-link {
+    justify-content: center;
+  }
+ 
+  .site-footer-redesign .footer-brand-col .social-links {
+    justify-content: center;
+  }
+ 
+  .site-footer-redesign .footer-logo-link img {
+    width: 136px;
+  }
+ 
+  .site-footer-redesign .footer-col p {
+    max-width: 420px;
+    text-align: center !important;
+  }
+ 
+  .site-footer-redesign .social-links a {
+    width: 42px;
+    height: 42px;
+    font-size: 15px;
+  }
+ 
+  /* All cols centered */
+  .site-footer-redesign .footer-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+ 
+  .site-footer-redesign .footer-col h4 {
+    text-align: center !important;
+    display: block !important;
+  }
+ 
+  /* Lists with bullets */
+  .site-footer-redesign .footer-col ul {
+    gap: 13px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: fit-content !important;
+    margin: 0 auto !important;
+  }
+ 
+  .site-footer-redesign .footer-col ul li {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+ 
+  .site-footer-redesign .footer-col ul li::before {
+    content: "" !important;
+    display: inline-block !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.45) !important;
+    flex-shrink: 0 !important;
+  }
+ 
+  .site-footer-redesign .footer-col ul li a {
+    display: inline !important;
+  }
+ 
+  /* Templates: stays in col 2, beside Legal — NOT full width */
+  .site-footer-redesign .footer-col:last-child {
+    grid-column: unset !important;
+    align-items: center !important;
+  }
+ 
+  /* 2×2 grid, only 4 cards */
+  .site-footer-redesign .footer-templates {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    max-width: 160px !important;
+    width: 100% !important;
+  }
+ 
+  .site-footer-redesign .footer-templates a {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    aspect-ratio: 1 !important;
+  }
+ 
+  /* Hide cards 5 and 6, show only first 4 */
+  .site-footer-redesign .footer-templates a:nth-child(n+5) {
+    display: none !important;
+  }
+ 
+  /* Footer bottom stacks left */
+  .site-footer-redesign .footer-bottom {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100%;
+    text-align: left !important;
+  }
+ 
+  .site-footer-redesign .footer-bottom-links {
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-start !important;
+  }
+}
+ 
+/* ═══════════════════════════════════════════════════════════
+   SMALL MOBILE  (≤ 480px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .site-footer-redesign .footer-container {
+    padding: 0 16px !important;
+  }
+ 
+  .site-footer-redesign .footer-top-strip {
+    padding: 18px !important;
+  }
+ 
+  .site-footer-redesign .footer-top-strip h3 {
+    font-size: 20px;
+  }
+ 
+  .site-footer-redesign .footer-templates {
+    max-width: none !important;
+  }
+}
+ 
+/* ═══════════════════════════════════════════════════════════
+   EXTRA SMALL  (≤ 420px)  — single column
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 420px) {
+  .site-footer-redesign .footer-container {
+    padding: 0 14px !important;
+  }
+ 
+  .site-footer-redesign .footer-top-strip {
+    padding: 16px !important;
+  }
+ 
+  .site-footer-redesign .footer-top-strip h3 {
+    font-size: 19px;
+  }
+ 
+  .site-footer-redesign .footer-content {
+    grid-template-columns: 1fr !important;
+  }
+ 
+  .site-footer-redesign .footer-col:last-child {
+    grid-column: unset !important;
+  }
+ 
+  .site-footer-redesign .footer-templates {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    max-width: none !important;
+  }
+}
+ 

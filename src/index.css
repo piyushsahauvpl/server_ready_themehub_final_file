@@ -1,0 +1,949 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+
+
+
+.browse-layout {
+    min-height: 600px;
+    position: relative;
+    padding-bottom: 120px;
+}
+ 
+.filters-sidebar {
+    margin-bottom: 40px;
+    z-index: 1;
+    background: #fff;
+}
+
+
+.mt-16 {
+  margin-top: 0rem !important;
+}
+
+.space-y-6 {
+  margin: 24px 0 0 0;
+}
+ 
+.templates-pagination {
+    margin-bottom: 60px;
+    z-index: 2;
+    background: #fff;
+    position: relative;
+}
+
+
+.pt-6 {
+    padding-top: 8.5rem;
+}
+/* Dark Mode Support */
+
+
+.dark body {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.dark .navbar {
+  background: #1f2937;
+  border-bottom: 1px solid #374151;
+}
+
+.dark .nav-links a {
+  color: #e5e7eb;
+}
+
+.dark .nav-links a:hover {
+  color: #10b981;
+}
+
+.dark .search-box {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.dark .search-box input {
+  color: #f9fafb;
+  background: transparent;
+}
+
+.dark .search-box input::placeholder {
+  color: #9ca3af;
+}
+
+.dark .cart-btn {
+  background: #374151;
+  color: #f9fafb;
+}
+
+.dark .btn-login,
+.dark .btn-register {
+  background: #374151;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+.dark .btn-login:hover,
+.dark .btn-register:hover {
+  background: #04733c;
+  color: white;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure homepage is clean */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+.public-app-shell {
+  --public-header-height: 150px;
+}
+
+.public-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  width: 100%;
+  z-index: 5000;
+}
+
+.public-header .site-navbar.navbar {
+  position: relative !important;
+  top: auto !important;
+}
+
+.public-app-shell .app-main-shell {
+  padding-top: var(--public-header-height);
+}
+
+@media (max-width: 560px) {
+  .public-app-shell {
+    --public-header-height: 142px;
+  }
+}
+ 
+/* Remove underline from navbar links */
+.nav-links a {
+  text-decoration: none !important;
+  color: black;
+}
+.template-monster h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+    margin-top: 40px ;
+}
+ 
+.container {
+    .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 17px 2rem;
+    max-height: 1228px;
+}
+}
+ 
+ 
+/* =========================
+   NAVBAR CORE FIX
+========================= */
+ 
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #ffffff;
+  width: 100%;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.nav-wrapper {
+  /* Fixed navbar height so changing logo size won't resize header */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-height, 80px);
+}
+ 
+ 
+
+
+
+
+ 
+.search-box {
+  background: #f8f9fa !important;
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  border: 2px solid #e0e0e0 !important;
+  gap: 0.75rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+ 
+.search-box:hover {
+  border-color: #04733c !important;
+  box-shadow: 0 4px 12px rgba(4, 115, 60, 0.12) !important;
+}
+ 
+.search-box:focus-within {
+  border-color: #04733c !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(4, 115, 60, 0.15) !important;
+}
+ 
+.search-box i {
+  color: #04733c !important;
+  font-size: 18px !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600 !important;
+}
+ 
+.search-box i:hover {
+  color: #036c34 !important;
+  transform: scale(1.1);
+}
+ 
+.search-box input {
+  font-size: 0.95rem !important;
+  width: 220px !important;
+  color: #333 !important;
+  font-weight: 500 !important;
+}
+ 
+.search-box input::placeholder {
+  color: #999 !important;
+  font-weight: 400 !important;
+}
+ 
+.dark .search-box {
+  background: #2d3748 !important;
+  border-color: #4a5568 !important;
+}
+ 
+.dark .search-box:hover {
+  border-color: #48bb78 !important;
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.15) !important;
+}
+ 
+.dark .search-box:focus-within {
+  border-color: #48bb78 !important;
+  background: #1a202c !important;
+  box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.2) !important;
+}
+ 
+.dark .search-box i {
+  color: #48bb78 !important;
+}
+ 
+.dark .search-box i:hover {
+  color: #38a169 !important;
+}
+ 
+.dark .search-box input {
+  color: #f7fafc !important;
+}
+ 
+.dark .search-box input::placeholder {
+  color: #a0aec0 !important;
+}
+ 
+ 
+/* LOGO FIX */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+/* Constrain logo image to navbar height so tweaking its size won't grow the header */
+.logo .site-logo,
+.site-logo {
+  display: block;
+  max-height: calc(var(--nav-height, 80px) - 1px);
+  height: auto;
+  width: auto;
+}
+ 
+ 
+/* =========================
+   HAMBURGER FIX
+========================= */
+ 
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+}
+ 
+/* REAL HAMBURGER ICON */
+.nav-toggle .hamburger {
+  width: 26px;
+  height: 3px;
+  background: #333;
+  position: relative;
+  display: block;
+  border-radius: 2px;
+}
+ 
+.nav-toggle .hamburger::before,
+.nav-toggle .hamburger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 26px;
+  height: 3px;
+  background: #333;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+ 
+.nav-toggle .hamburger::before {
+  top: -8px;
+}
+ 
+.nav-toggle .hamburger::after {
+  top: 8px;
+}
+ 
+/* =========================
+   NAV LINKS (MOBILE)
+========================= */
+ 
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+ 
+@media (max-width: 900px) {
+ 
+  /* Show hamburger beside logo */
+  .nav-toggle {
+    display: block;
+  }
+ 
+  /* Hide desktop content */
+  .nav-links,
+  .nav-actions {
+    display: none;
+  }
+ 
+  /* Mobile menu panel */
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 64px;
+    right: 0;
+    width: 260px;
+    height: calc(100vh - 64px);
+    background: #ffffff;
+    padding: 20px;
+    gap: 16px;
+    box-shadow: -6px 0 20px rgba(0,0,0,0.15);
+    z-index: 999;
+  }
+ 
+  .nav-links.open a {
+    font-size: 16px;
+    color: #333;
+  }
+ 
+  /* Support dropdown inside mobile */
+  .support-dropdown.mobile {
+    margin-top: 10px;
+  }
+}
+ 
+/* =========================
+   HERO / SECTION FIX
+========================= */
+ 
+main {
+  overflow-x: hidden;
+}
+ 
+.hero-new,
+.categories-section,
+.tm-section {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* =========================
+   HOME VISITOR METER & CHATBOT (at end of page)
+========================= */
+
+.home-widgets-end {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 20px;
+  margin-top: 60px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.visitor-meter-widget-end {
+  background: #111827;
+  color: #f9fafb;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 140px;
+}
+
+/* Custom scrollbar for ticket messages only */
+.ticket-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.25) transparent;
+}
+.ticket-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+.ticket-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ticket-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.18);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.ticket-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* Ensure flex children can shrink properly when parent has fixed height */
+.min-h-0 {
+  min-height: 0;
+}
+
+/* Custom chat scrollbar for message pane */
+.custom-chat-scroll {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #0b7a3f #f1f5f9;
+}
+
+/* Prevent scroll chaining so chat scroll doesn't cause page scroll */
+.custom-chat-scroll {
+  overscroll-behavior: contain;
+  -ms-overflow-style: auto; /* IE 10+ */
+  touch-action: pan-y;
+  position: relative;
+}
+
+.custom-chat-scroll::-webkit-scrollbar {
+  width: 12px;
+}
+
+.custom-chat-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9; /* light track */
+  border-radius: 12px;
+  margin: 6px 0;
+}
+
+.custom-chat-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0b7a3f, #04733c);
+  border-radius: 12px;
+  border: 3px solid #f1f5f9; /* create padding around thumb */
+}
+
+.custom-chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0f8f48, #05924a);
+}
+
+/* Slight shadow inside track for depth */
+.custom-chat-scroll::-webkit-scrollbar-track-piece {
+  box-shadow: inset 0 0 6px rgba(2,6,23,0.03);
+}
+
+/* When in dark mode, adjust colors */
+.dark .custom-chat-scroll::-webkit-scrollbar-track { background: #1f2937; }
+.dark .custom-chat-scroll::-webkit-scrollbar-thumb { border-color: #1f2937; }
+.dark .custom-chat-scroll { scrollbar-color: #05924a #1f2937; }
+
+/* Responsive chat pane sizing and safe spacing to avoid pushing footer/navbar */
+.chat-pane {
+  /* Keep the chat list independent of the page and leave room for header/footer */
+  max-height: 60vh; /* fallback */
+  height: auto;
+  min-height: 220px;
+}
+
+/* When viewport is small, reduce chat height so footer doesn't get pushed */
+@media (max-height: 700px) {
+  .chat-pane { max-height: 50vh; }
+}
+
+/* Desktop tall screens: increase available chat height */
+@media (min-height: 1000px) {
+  .chat-pane { max-height: 70vh; }
+}
+
+.visitor-meter-widget-end .vm-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.visitor-meter-widget-end .vm-count {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.chatbot-widget-end {
+  flex: 1;
+  max-width: 400px;
+}
+
+.chatbot-panel {
+  background: transparent;
+  border: none;
+}
+
+.chatbot-toggle {
+  list-style: none;
+  background: #2563eb;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.chatbot-toggle:hover {
+  background: #1d4ed8;
+}
+
+.chatbot-body {
+  margin-top: 12px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.chatbot-messages {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  min-height: 60px;
+}
+
+.chatbot-msg {
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  max-width: 85%;
+}
+
+.chatbot-msg-bot {
+  background: #f3f4f6;
+  color: #374151;
+  align-self: flex-start;
+}
+
+.chatbot-msg-user {
+  background: #2563eb;
+  color: #fff;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.chatbot-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.chatbot-input {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  box-sizing: border-box;
+}
+
+.chatbot-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.chatbot-send {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #16a34a;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.chatbot-send:hover {
+  background: #15803d;
+}
+
+@media (max-width: 768px) {
+  .home-widgets-end {
+    flex-direction: column;
+    padding: 30px 16px;
+  }
+  
+  .visitor-meter-widget-end {
+    width: 100%;
+  }
+  
+  .chatbot-widget-end {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+
+
+ 
+ 
+ /* ===========================
+   ENHANCED SEARCH BUTTON STYLING (Blog Sidebar)
+   =========================== */
+ 
+.search-btn {
+  background: linear-gradient(135deg, #04733c 0%, #065a3a 100%) !important;
+  color: #ffffff !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  cursor: pointer;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(4, 115, 60, 0.3) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative;
+  overflow: hidden;
+}
+ 
+.search-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s ease;
+}
+ 
+.search-btn:hover {
+  background: linear-gradient(135deg, #065a3a 0%, #043d27 100%) !important;
+  box-shadow: 0 6px 20px rgba(4, 115, 60, 0.4) !important;
+  transform: translateY(-2px);
+}
+ 
+.search-btn:hover::before {
+  left: 100%;
+}
+ 
+.search-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(4, 115, 60, 0.2) !important;
+}
+ 
+/* Style for search button inside top-bar (blog sidebar) */
+.top-bar .search-btn {
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #04733c 0%, #065a3a 100%) !important;
+  padding: 11px 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 15px rgba(4, 115, 60, 0.3) !important;
+}
+ 
+.top-bar .search-btn:hover {
+  background: linear-gradient(135deg, #065a3a 0%, #043d27 100%) !important;
+  box-shadow: 0 6px 20px rgba(4, 115, 60, 0.4) !important;
+  transform: translateY(-50%) scale(1.05);
+}
+ 
+.dark .search-btn {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3) !important;
+}
+ 
+.dark .search-btn:hover {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%) !important;
+  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4) !important;
+}
+ 
+
+/* ui bug css code  */
+
+
+/* Redesigned card styles for Templates/Product cards */
+ 
+/* Card base */
+.product-card,
+.template-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(11,8,29,0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+ 
+/* Product/grid image area */
+.product-card .product-media {
+  width: 100%;
+}
+.product-card .product-media .image-scroll-container {
+  height: 220px !important;
+  overflow: hidden;
+  display: block;
+}
+.product-card .product-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+ 
+/* Card body to allow footer to stick to bottom */
+.product-card .product-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+}
+.product-card .product-title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+.product-card .product-desc {
+  color: var(--muted, #6b7280);
+  font-size: 0.95rem;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.product-card .product-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 6px;
+}
+.product-card .product-price {
+  font-weight: 700;
+  color:white;
+  font-size: 1.05rem;
+}
+.product-card .add-to-cart-btn,
+.product-card .product-view {
+  background: #04753d;
+  color: #fff;
+  border: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.product-card .product-view {
+  background: transparent;
+  color: inherit;
+}
+ 
+/* List view (template-card) layout */
+.template-card {
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 0;
+}
+.template-card .template-image {
+  flex: 0 0 220px;
+  width: 220px;
+}
+.template-card .template-image .image-scroll-container {
+  height: 160px !important;
+}
+.template-card .template-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.template-card .template-info {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+}
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.template-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.template-description {
+  margin: 0;
+  color: var(--muted, #6b7280);
+  font-size: 0.95rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.template-meta {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.template-meta .btn {
+  background: #04753d;
+  color: #fff;
+  border: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+ 
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .template-card {
+    flex-direction: column;
+  }
+  .template-card .template-image {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+}
+ 
+@media (max-width: 640px) {
+  .product-card .product-media .image-scroll-container {
+    height: 160px !important;
+  }
+}
+ 
+
+
+/* Layout fixes for Templates page to ensure content grows naturally and pushes footer down */
+ 
+.templates-browse-section .container {
+  /* allow container to expand with content on this page */
+  max-height: none !important;
+}
+ 
+.templates-browse-section .browse-layout {
+  position: static !important;
+  min-height: auto !important;
+  padding-bottom: 0 !important;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+ 
+.templates-browse-section .filters-sidebar {
+  flex: 0 0 300px;
+  width: 300px;
+  margin-bottom: 0 !important;
+  position: static !important;
+  z-index: auto !important;
+  background: transparent !important;
+}
+ 
+.templates-browse-section .templates-content {
+  flex: 1 1 auto;
+  width: auto;
+}
+ 
+.templates-browse-section .templates-pagination {
+  position: static !important;
+  margin-bottom: 2rem !important;
+  z-index: auto !important;
+  background: transparent !important;
+}
+ 
+/* Ensure grids flow and grow naturally */
+ 
+ 
+/* Keep image scroll fixed heights only for visuals; do not affect overall layout */
+.templates-browse-section .image-scroll-container {
+  overflow: hidden;
+}
+ 
+ 
+ 
+
+
+
