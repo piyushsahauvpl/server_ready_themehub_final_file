@@ -25,6 +25,8 @@ header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../config/database.php';
+require_once '../config/currency-config.php';
+require_once '../helpers/currency-helper.php';
 
 session_start();
 ob_end_clean();
@@ -36,6 +38,14 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 try {
+    $requestedCurrency = strtoupper(trim($_GET['currency'] ?? ''));
+    if ($requestedCurrency && preg_match('/^[A-Z]{3}$/', $requestedCurrency)) {
+        setUserCurrency($requestedCurrency);
+    }
+
+    $currencyInfo = getCurrencyInfo();
+    $userCurrency = $currencyInfo['currency'];
+    $userSymbol = $currencyInfo['symbol'];
     $conn = getDBConnection();
     $userId = $_SESSION['user_id'];
     $method = $_SERVER['REQUEST_METHOD'];
@@ -82,13 +92,28 @@ try {
                 if ($row['image_url'] && !str_starts_with($row['image_url'], 'http')) {
                     $row['image_url'] = 'https://uptulathemehub.com' . ($row['image_url'][0] === '/' ? $row['image_url'] : '/' . $row['image_url']);
                 }
+                $priceINR = floatval($row['price']);
+                $row['price'] = $priceINR;
+                $row['price_inr'] = $priceINR;
+                $row['converted_price'] = convertCurrency($priceINR, $userCurrency);
+                $row['currency'] = $userCurrency;
+                $row['currency_symbol'] = $userSymbol;
                 $items[] = $row;
             }
             
             $stmt->close();
             closeDBConnection($conn);
 
-            echo json_encode(['success' => true, 'items' => $items]);
+            echo json_encode([
+                'success' => true,
+                'items' => $items,
+                'currency' => [
+                    'code' => $userCurrency,
+                    'symbol' => $userSymbol,
+                    'country' => $currencyInfo['country'],
+                    'is_manual' => $currencyInfo['is_manual']
+                ]
+            ]);
             break;
 
         case 'POST':

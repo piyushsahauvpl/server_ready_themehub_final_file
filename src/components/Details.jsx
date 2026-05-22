@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 // Nav/Footer are rendered globally in App.jsx; avoid duplicates here
 import templates from '../data/templates';
 import { CartContext } from '../components/CartContext';
+import { useCurrency } from '../contexts/CurrencyContext';
+import { createCartItem, formatDisplayPrice } from '../lib/currency';
 import { openPreviewForTemplate } from '../lib/preview';
 import '../assets/css/template-details.css';
  
@@ -10,6 +12,8 @@ function TemplateDetails(){
   const { slug } = useParams();
   const [tpl, setTpl] = useState(null);
   const { addToCart } = useContext(CartContext);
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || 'INR';
  
   useEffect(() => {
     // First try local templates by slug or ID
@@ -25,7 +29,7 @@ function TemplateDetails(){
  
     // Then try fetching from backend API by slug or ID
     const API_URL = process.env.REACT_APP_API_URL || "https://uptulathemehub.com/backend/api";
-    const API = `${API_URL}/products.php?id=${slug}`;
+    const API = `${API_URL}/products.php?id=${encodeURIComponent(slug)}&currency=${encodeURIComponent(activeCurrency)}`;
    
     fetch(API, { credentials: 'include' })
       .then(r => r.json())
@@ -41,7 +45,7 @@ function TemplateDetails(){
         console.error('Failed to load template from API:', err);
         setTpl(templates[0]);
       });
-  }, [slug]);
+  }, [slug, activeCurrency]);
  
   return (
     <>
@@ -68,7 +72,7 @@ function TemplateDetails(){
                       />
                     ) : null}
                   </div>
-                <div className="price-badge-large">₹{tpl.price_display ?? (Number(tpl.price || 0).toFixed(2))}</div>
+                <div className="price-badge-large">{formatDisplayPrice(tpl, currencyContext)}</div>
               </div>
             </div>
  
@@ -87,10 +91,10 @@ function TemplateDetails(){
               </div>
  
               <div className="price-section">
-                <div className="price">₹{tpl.price_display ?? (Number(tpl.price || 0).toFixed(2))}</div>
+                <div className="price">{formatDisplayPrice(tpl, currencyContext)}</div>
  
                 <div className="action-row">
-                  <button className="btn btn-add-cart" id="addToCartBtn" onClick={() => addToCart({ id: tpl.id, title: tpl.title || tpl.name, price: Number(tpl.price ?? tpl.regular_price ?? 0), image: tpl.image || tpl.image_url })}>
+                  <button className="btn btn-add-cart" id="addToCartBtn" onClick={() => addToCart(createCartItem(tpl))}>
                     <i className="fas fa-shopping-cart" /> Add to Cart
                   </button>
  

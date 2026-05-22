@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '../contexts/CurrencyContext';
 import {
   FiDownload,
   FiFileText,
@@ -34,6 +35,7 @@ export default function DynamicPurchaseHistory({
   variant = 'compact' 
 }) {
   const navigate = useNavigate();
+  const { formatPrice, convertPrice } = useCurrency();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [userReviews, setUserReviews] = useState({});
@@ -204,39 +206,59 @@ export default function DynamicPurchaseHistory({
               </div>
             </div>
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Product ID</th>
-                  <th>Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>${invoiceTitle}</td>
-                  <td>#${purchase.product_id || "N/A"}</td>
-                  <td>₹${totalAmount.toFixed(2)}</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td></td>
-                  <td><strong>Subtotal</strong></td>
-                  <td><strong>₹${calculatedSubtotal.toFixed(2)}</strong></td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td><strong>GST (${taxRate.toFixed(0)}%)</strong></td>
-                  <td><strong>₹${taxAmount.toFixed(2)}</strong></td>
-                </tr>
-                <tr class="summary-row">
-                  <td></td>
-                  <td><strong>Total</strong></td>
-                  <td><strong>₹${totalAmount.toFixed(2)}</strong></td>
-                </tr>
-              </tfoot>
-            </table>
+<table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Product ID</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>${invoiceTitle}</td>
+      <td>#${purchase.product_id || "N/A"}</td>
+      <td>${formatPrice(convertPrice(totalAmount))}</td>
+    </tr>
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td></td>
+      <td><strong>Subtotal</strong></td>
+      <td>
+        <strong>
+          ${formatPrice(convertPrice(calculatedSubtotal))}
+        </strong>
+      </td>
+    </tr>
+
+    <tr>
+      <td></td>
+      <td>
+        <strong>
+          GST (${taxRate.toFixed(0)}%)
+        </strong>
+      </td>
+      <td>
+        <strong>
+          ${formatPrice(convertPrice(taxAmount))}
+        </strong>
+      </td>
+    </tr>
+
+    <tr class="summary-row">
+      <td></td>
+      <td><strong>Total</strong></td>
+      <td>
+        <strong>
+          ${formatPrice(convertPrice(totalAmount))}
+        </strong>
+      </td>
+    </tr>
+  </tfoot>
+</table>
 
             <div class="footer">
               <div>
@@ -518,8 +540,7 @@ export default function DynamicPurchaseHistory({
                     })}
                   </span>
                   <span className="flex items-center gap-1">
-                    <span className="text-gray-500">₹</span>
-                    {parseFloat(purchase.amount || 0).toFixed(2)}
+                    {formatPrice(convertPrice(parseFloat(purchase.amount || 0)))}
                   </span>
                   {purchase.product_id && (
                     <span className="flex items-center gap-1 text-gray-500">
@@ -654,7 +675,7 @@ export default function DynamicPurchaseHistory({
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">Refund Terms & Conditions</h3>
                   <p className="text-sm text-gray-600 mt-1">
-                    For <strong>{selectedPurchase.product_name}</strong> priced at ₹{parseFloat(selectedPurchase.amount || 0).toFixed(2)}
+                    For <strong>{selectedPurchase.product_name}</strong> priced at {formatPrice(convertPrice(parseFloat(selectedPurchase.amount || 0)))}
                   </p>
                 </div>
               </div>
@@ -712,7 +733,7 @@ export default function DynamicPurchaseHistory({
               </p>
             </div>
             <p className="text-sm text-gray-600 mb-4">
-              Requesting refund for: <strong>{selectedPurchase.product_name}</strong> (₹{parseFloat(selectedPurchase.amount).toFixed(2)})
+              Requesting refund for: <strong>{selectedPurchase.product_name}</strong> ({formatPrice(convertPrice(parseFloat(selectedPurchase.amount)))})
             </p>
             <div className="space-y-4">
               ...

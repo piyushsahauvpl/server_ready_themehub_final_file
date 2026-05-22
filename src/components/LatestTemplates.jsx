@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import productStore from '../lib/productStore'
 import { CartContext } from './CartContext'
+import { useCurrency } from '../contexts/CurrencyContext'
+import { createCartItem, formatDisplayPrice } from '../lib/currency'
 import { getTemplateUrl } from '../lib/slug'
-import { formatPrice } from '../lib/currency'
 import '../assets/css/style.css'
 import './LatestTemplates.css'
 import { Helmet } from "./SeoHelmet"; 
@@ -12,6 +13,8 @@ import { Helmet } from "./SeoHelmet";
 export default function LatestTemplates({ view = 'carousel', category = 'all', showTitle = true }) {
   const navigate = useNavigate()
   const { addToCart } = useContext(CartContext)
+  const currencyContext = useCurrency()
+  const activeCurrency = currencyContext.currency || 'INR'
   const containerRef = useRef(null)
   const [scrollAmount, setScrollAmount] = useState(360)
   const [showLeft, setShowLeft] = useState(false)
@@ -34,13 +37,7 @@ export default function LatestTemplates({ view = 'carousel', category = 'all', s
 
   const handleAddToCart = (e, item) => {
     e.stopPropagation()
-    addToCart({
-      id: item.id,
-      name: item.name || item.title,
-      price: parseFloat(item.price || 0),
-      image: item.image_url || item.image,
-      slug: item.slug
-    })
+    addToCart(createCartItem(item))
   }
 
   useEffect(() => {
@@ -49,17 +46,22 @@ export default function LatestTemplates({ view = 'carousel', category = 'all', s
 
     const API_URL = process.env.REACT_APP_API_URL || 'https://uptulathemehub.com/backend/api'
 
-    fetch(`${API_URL}/latest-products.php`)
+    const currencyParam = `currency=${encodeURIComponent(activeCurrency)}`
+
+    console.log('[LatestTemplates] Fetching with currency:', { activeCurrency, currencyParam })
+
+    fetch(`${API_URL}/latest-products.php?${currencyParam}`, { credentials: 'include' })
       .then(r => r.json())
       .then(json => {
         if (!mounted) return
+        console.log('[LatestTemplates] API Response:', { hasSuccess: json.success, dataLength: json.data?.length, firstItemCurrency: json.data?.[0]?.currency, firstItemSymbol: json.data?.[0]?.currency_symbol, firstItemPrice: json.data?.[0]?.price, firstItemConverted: json.data?.[0]?.converted_price })
         if (json.success && json.data && Array.isArray(json.data) && json.data.length > 0) {
           setItems(json.data)
           setLoading(false)
           return
         }
 
-        fetch(`${API_URL}/products.php?limit=20`)
+        fetch(`${API_URL}/products.php?limit=20&${currencyParam}`, { credentials: 'include' })
           .then(r => r.json())
           .then(json => {
             if (!mounted) return
@@ -73,7 +75,8 @@ export default function LatestTemplates({ view = 'carousel', category = 'all', s
           .finally(() => setLoading(false))
       })
       .catch(() => {
-        fetch(`${API_URL}/products.php?limit=20`)
+        console.warn('[LatestTemplates] Latest products API failed, trying products API')
+        fetch(`${API_URL}/products.php?limit=20&${currencyParam}`, { credentials: 'include' })
           .then(r => r.json())
           .then(json => {
             if (!mounted) return
@@ -88,7 +91,7 @@ export default function LatestTemplates({ view = 'carousel', category = 'all', s
       })
 
     return () => (mounted = false)
-  }, [])
+  }, [activeCurrency])
 
   const computeScrollAmount = useCallback(() => {
     const container = containerRef.current
@@ -213,7 +216,7 @@ export default function LatestTemplates({ view = 'carousel', category = 'all', s
 
                 <div className="lt-meta-row">
                   <p>{cleanCategory(item)}</p>
-                  <strong>{formatPrice(item.price)}</strong>
+                  <strong>{formatDisplayPrice(item, currencyContext)}</strong>
                 </div>
 
                 <div className="lt-actions">

@@ -4,207 +4,304 @@ import React, {
   useState,
   useEffect,
   useCallback
-} from 'react';
+} from "react";
+import { formatCurrency, getCurrencySymbol } from "../lib/currency";
 
 /**
- * ============================================================================
+ * ============================================================
  * CURRENCY CONTEXT
- * ============================================================================
+ * ============================================================
  */
 
 const CurrencyContext = createContext(null);
 
 /**
- * ============================================================================
+ * ============================================================
  * DEFAULT CURRENCY
- * ============================================================================
+ * ============================================================
  */
 
 const DEFAULT_CURRENCY = {
-  code: 'INR',
-  symbol: '₹',
-  country: 'IN',
+  code: "INR",
+  symbol: "\u20B9",
+  country: "IN",
   is_manual: false
 };
 
 /**
- * ============================================================================
+ * ============================================================
+ * CACHE CONFIG
+ * ============================================================
+ */
+
+const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 Hours
+
+/**
+ * ============================================================
  * PROVIDER
- * ============================================================================
+ * ============================================================
  */
 
 export function CurrencyProvider({ children }) {
 
   const [currencyInfo, setCurrencyInfo] = useState(DEFAULT_CURRENCY);
 
-  const [exchangeRates, setExchangeRates] = useState({ INR: 1 });
+  const [exchangeRates, setExchangeRates] = useState({
+    INR: 1
+  });
 
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState(null);
 
   /**
-   * ============================================================================
+   * ============================================================
    * FETCH CURRENCY INFO
-   * ============================================================================
+   * ============================================================
    */
 
-useEffect(() => {
+  useEffect(() => {
 
-  const fetchCurrencyInfo = async () => {
+    const fetchCurrencyInfo = async () => {
 
-    try {
+      try {
 
-      setLoading(true);
+        setLoading(true);
 
-      setError(null);
+        setError(null);
 
-      /**
-       * ============================================================
-       * STEP 1:
-       * DETECT COUNTRY FROM FRONTEND
-       * ============================================================
-       */
+        /**
+         * ============================================================
+         * STEP 1:
+         * CHECK CACHE FIRST
+         * ============================================================
+         */
 
-      const geoResponse = await fetch('https://ipapi.co/json/');
+        const cachedCurrency =
+          localStorage.getItem("currentCurrency");
 
-      const geoData = await geoResponse.json();
+        const cachedRates =
+          localStorage.getItem("exchangeRates");
 
-      const country = geoData.country_code || 'IN';
+        const cachedTimestamp =
+          localStorage.getItem("exchangeRatesTimestamp");
 
-      console.log('Detected Country:', country);
+        const now = Date.now();
 
-      /**
-       * ============================================================
-       * STEP 2:
-       * FETCH CURRENCY FROM BACKEND
-       * IMPORTANT:
-       * DO NOT USE OLD selectedCurrency CACHE
-       * ============================================================
-       */
+        /**
+         * ============================================================
+         * STEP 2:
+         * DETECT USER COUNTRY
+         * ============================================================
+         */
 
-      const response = await fetch(
+        const geoResponse = await fetch(
+          "https://ipapi.co/json/"
+        );
 
-        `/backend/api/currency.php?action=get-currency&country=${country}`,
+        const geoData = await geoResponse.json();
 
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
+        const country =
+          geoData.country_code || "IN";
+
+        console.log("[CurrencyContext] Detected Country:", country);
+
+        const selectedCurrency = localStorage.getItem("selectedCurrency");
+
+        if (
+          cachedCurrency &&
+          cachedRates &&
+          cachedTimestamp &&
+          now - Number(cachedTimestamp) < CACHE_DURATION
+        ) {
+
+          try {
+
+            const parsedCurrency = JSON.parse(cachedCurrency);
+            const cacheMatchesManualSelection =
+              selectedCurrency && parsedCurrency.code === selectedCurrency;
+            const cacheMatchesDetectedCountry =
+              !selectedCurrency && parsedCurrency.country === country;
+
+            if (cacheMatchesManualSelection || cacheMatchesDetectedCountry) {
+              setCurrencyInfo(parsedCurrency);
+
+              setExchangeRates(JSON.parse(cachedRates));
+
+              setLoading(false);
+
+              console.log("[CurrencyContext] Loaded currency from cache");
+
+              return;
+            }
+
+          } catch (cacheErr) {
+
+            console.error("Cache Parse Error:", cacheErr);
           }
         }
-      );
-
-      if (!response.ok) {
-
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      console.log('Currency API Response:', data);
-
-      /**
-       * ============================================================
-       * STEP 3:
-       * UPDATE STATE
-       * ============================================================
-       */
-
-      if (data.success && data.data) {
-
-        setCurrencyInfo({
-
-          code: data.data.currency,
-          symbol: data.data.symbol,
-          country: data.data.country,
-          is_manual: data.data.is_manual || false
-
-        });
 
         /**
-         * EXCHANGE RATES
+         * ============================================================
+         * STEP 3:
+         * GET CURRENCY + EXCHANGE RATE
+         * ============================================================
          */
 
-        if (data.exchange_rates) {
+        const currencyQuery = selectedCurrency
+          ? `&currency=${encodeURIComponent(selectedCurrency)}`
+          : "";
 
-          setExchangeRates(data.exchange_rates);
+        const response = await fetch(
+          `/backend/api/currency.php?action=get-currency&country=${country}${currencyQuery}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        );
+
+        if (!response.ok) {
+
+          throw new Error(`HTTP ${response.status}`);
         }
+
+        const data = await response.json();
+
+        console.log('[CurrencyContext] Full API Response:', data);
 
         /**
-         * CACHE
+         * ============================================================
+         * STEP 4:
+         * UPDATE STATE
+         * ============================================================
          */
 
-        localStorage.setItem(
+        if (data.success && data.data) {
 
-          'currentCurrency',
-          JSON.stringify(data.data)
+          const updatedCurrency = {
 
-        );
+            code: data.data.currency || "INR",
 
-        localStorage.setItem(
+            symbol: data.data.symbol || getCurrencySymbol(data.data.currency || "INR"),
 
-          'exchangeRates',
-          JSON.stringify(data.exchange_rates || {})
+            country: data.data.country || "IN",
 
-        );
+            is_manual: data.data.is_manual || false
+          };
 
-        localStorage.setItem(
+          setCurrencyInfo(updatedCurrency);
 
-          'exchangeRatesTimestamp',
-          Date.now().toString()
+          /**
+           * EXCHANGE RATES
+           */
 
-        );
-      }
+          if (data.exchange_rates) {
 
-    } catch (err) {
+            console.log('[CurrencyContext] Exchange Rates Loaded:', {
+              rates: data.exchange_rates,
+              userCurrency: updatedCurrency.code,
+              rate: data.exchange_rates[updatedCurrency.code]
+            });
 
-      console.error('Currency Error:', err);
+            setExchangeRates(data.exchange_rates);
+          } else {
+            console.warn('[CurrencyContext] No exchange_rates in API response');
+          }
 
-      setError(err.message);
+          /**
+           * SAVE CACHE
+           */
 
-      /**
-       * ============================================================
-       * FALLBACK TO CACHE
-       * ============================================================
-       */
+          localStorage.setItem(
+            "currentCurrency",
+            JSON.stringify(updatedCurrency)
+          );
 
-      const cached = localStorage.getItem('currentCurrency');
+          localStorage.setItem(
+            "exchangeRates",
+            JSON.stringify(
+              data.exchange_rates || { INR: 1 }
+            )
+          );
 
-      if (cached) {
-
-        try {
-
-          setCurrencyInfo(JSON.parse(cached));
-
-        } catch (e) {
-
-          console.error('Cache Parse Error:', e);
+          localStorage.setItem(
+            "exchangeRatesTimestamp",
+            now.toString()
+          );
         }
+
+      } catch (err) {
+
+        console.error("Currency Error:", err);
+
+        setError(err.message);
+
+        /**
+         * ============================================================
+         * FALLBACK
+         * ============================================================
+         */
+
+        const cachedCurrency =
+          localStorage.getItem("currentCurrency");
+
+        const cachedRates =
+          localStorage.getItem("exchangeRates");
+
+        if (cachedCurrency) {
+
+          try {
+
+            setCurrencyInfo(
+              JSON.parse(cachedCurrency)
+            );
+
+          } catch (e) {
+
+            console.error("Currency Cache Error:", e);
+          }
+        }
+
+        if (cachedRates) {
+
+          try {
+
+            setExchangeRates(
+              JSON.parse(cachedRates)
+            );
+
+          } catch (e) {
+
+            console.error("Rates Cache Error:", e);
+          }
+        }
+
+      } finally {
+
+        setLoading(false);
       }
+    };
 
-    } finally {
+    fetchCurrencyInfo();
 
-      setLoading(false);
-    }
-  };
-
-  fetchCurrencyInfo();
-
-}, []);
+  }, []);
 
   /**
-   * ============================================================================
+   * ============================================================
    * CONVERT PRICE
-   * ============================================================================
+   * ============================================================
    */
 
   const convertPrice = useCallback(
 
     (priceINR) => {
 
-      if (!priceINR || typeof priceINR !== 'number') {
+      const amount = parseFloat(priceINR);
+
+      if (isNaN(amount)) {
 
         return 0;
       }
@@ -213,29 +310,39 @@ useEffect(() => {
        * INR
        */
 
-      if (currencyInfo.code === 'INR') {
+      if (currencyInfo.code === "INR") {
 
-        return Math.round(priceINR * 100) / 100;
+        return Math.round(amount * 100) / 100;
       }
 
       /**
        * EXCHANGE RATE
        */
 
-      const rate = exchangeRates[currencyInfo.code];
+      const rate =
+        exchangeRates[currencyInfo.code];
 
       if (!rate || rate <= 0) {
 
         console.warn(
-
-          `Missing exchange rate for ${currencyInfo.code}`
-
+          `[CurrencyContext] Missing exchange rate for ${currencyInfo.code}. Available rates:`, 
+          exchangeRates
         );
 
-        return Math.round(priceINR * 100) / 100;
+        return Math.round(amount * 100) / 100;
       }
 
-      const converted = priceINR * rate;
+      const converted = amount * rate;
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[CurrencyContext.convertPrice]', {
+          inputINR: amount,
+          currency: currencyInfo.code,
+          rate,
+          converted,
+          final: Math.round(converted * 100) / 100
+        });
+      }
 
       return Math.round(converted * 100) / 100;
 
@@ -246,173 +353,211 @@ useEffect(() => {
   );
 
   /**
-   * ============================================================================
+   * ============================================================
    * FORMAT PRICE
-   * ============================================================================
+   * ============================================================
    */
 
   const formatPrice = useCallback(
 
     (price) => {
 
-      if (price === null || price === undefined) {
+      const amount = parseFloat(price);
+
+      if (isNaN(amount)) {
 
         return `${currencyInfo.symbol}0`;
       }
 
-      const num =
+      try {
 
-        typeof price === 'number'
-          ? price
-          : parseFloat(price) || 0;
+        return formatCurrency(amount, currencyInfo.symbol, currencyInfo.code);
 
-      const formatted =
+      } catch (err) {
 
-        Number.isInteger(num)
-          ? num.toString()
-          : num.toFixed(2);
+        console.error(
+          "Currency Format Error:",
+          err
+        );
 
-      return `${currencyInfo.symbol}${formatted}`;
+        return `${currencyInfo.symbol}${amount.toFixed(2)}`;
+      }
 
     },
 
-    [currencyInfo.symbol]
+    [currencyInfo.code, currencyInfo.symbol]
 
   );
 
   /**
-   * ============================================================================
+   * ============================================================
    * MANUAL CURRENCY SWITCH
-   * ============================================================================
+   * ============================================================
    */
 
-  const setCurrency = useCallback(async (currencyCode) => {
+  const setCurrency = useCallback(
 
-    try {
+    async (currencyCode) => {
 
-      const response = await fetch(
+      try {
 
-        `/backend/api/currency.php?action=set-currency&currency=${currencyCode}`,
+        setLoading(true);
 
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
+        const response = await fetch(
+
+          `/backend/api/currency.php?action=set-currency&currency=${currencyCode}`,
+
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json"
+            }
           }
+        );
+
+        if (!response.ok) {
+
+          throw new Error(`HTTP ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
+        const data = await response.json();
 
-        throw new Error(`HTTP ${response.status}`);
-      }
+        if (data.success && data.data) {
 
-      const data = await response.json();
+          const updatedCurrency = {
 
-      if (data.success && data.data) {
+            code: data.data.currency,
 
-        setCurrencyInfo({
+            symbol: data.data.symbol,
 
-          code: data.data.currency,
-          symbol: data.data.symbol,
-          country: data.data.country,
-          is_manual: true
+            country: data.data.country,
 
-        });
+            is_manual: true
+          };
 
-        localStorage.setItem(
+          setCurrencyInfo(updatedCurrency);
 
-          'selectedCurrency',
-          currencyCode
+          if (data.exchange_rates) {
+            setExchangeRates(data.exchange_rates);
+            localStorage.setItem(
+              "exchangeRates",
+              JSON.stringify(data.exchange_rates)
+            );
+            localStorage.setItem(
+              "exchangeRatesTimestamp",
+              Date.now().toString()
+            );
+          }
 
+          /**
+           * CACHE
+           */
+
+          localStorage.setItem(
+            "selectedCurrency",
+            currencyCode
+          );
+
+          localStorage.setItem(
+            "currentCurrency",
+            JSON.stringify(updatedCurrency)
+          );
+        }
+
+      } catch (err) {
+
+        console.error(
+          "Set Currency Error:",
+          err
         );
 
-        localStorage.setItem(
+        setError(err.message);
 
-          'currentCurrency',
-          JSON.stringify(data.data)
+      } finally {
 
-        );
+        setLoading(false);
       }
 
-    } catch (err) {
+    },
 
-      console.error('Set Currency Error:', err);
+    []
 
-      setError(err.message);
-    }
-
-  }, []);
+  );
 
   /**
-   * ============================================================================
+   * ============================================================
    * REFRESH RATES
-   * ============================================================================
+   * ============================================================
    */
 
-  const refreshRates = useCallback(async () => {
+  const refreshRates = useCallback(
 
-    try {
+    async () => {
 
-      setLoading(true);
+      try {
 
-      const response = await fetch(
+        setLoading(true);
 
-        '/backend/api/currency.php?action=refresh-rates',
+        const response = await fetch(
 
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
+          "/backend/api/currency.php?action=refresh-rates",
+
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json"
+            }
           }
+        );
+
+        if (!response.ok) {
+
+          throw new Error(`HTTP ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
+        const data = await response.json();
 
-        throw new Error(`HTTP ${response.status}`);
-      }
+        if (data.success && data.data) {
 
-      const data = await response.json();
+          setExchangeRates(data.data);
 
-      if (data.success && data.data) {
+          localStorage.setItem(
+            "exchangeRates",
+            JSON.stringify(data.data)
+          );
 
-        setExchangeRates(data.data);
+          localStorage.setItem(
+            "exchangeRatesTimestamp",
+            Date.now().toString()
+          );
+        }
 
-        localStorage.setItem(
+      } catch (err) {
 
-          'exchangeRates',
-          JSON.stringify(data.data)
-
+        console.error(
+          "Refresh Rates Error:",
+          err
         );
 
-        localStorage.setItem(
+        setError(err.message);
 
-          'exchangeRatesTimestamp',
-          Date.now().toString()
+      } finally {
 
-        );
+        setLoading(false);
       }
 
-    } catch (err) {
+    },
 
-      console.error('Refresh Rates Error:', err);
+    []
 
-      setError(err.message);
-
-    } finally {
-
-      setLoading(false);
-    }
-
-  }, []);
+  );
 
   /**
-   * ============================================================================
+   * ============================================================
    * CONTEXT VALUE
-   * ============================================================================
+   * ============================================================
    */
 
   const value = {
@@ -453,9 +598,9 @@ useEffect(() => {
 }
 
 /**
- * ============================================================================
+ * ============================================================
  * HOOK
- * ============================================================================
+ * ============================================================
  */
 
 export function useCurrency() {
@@ -465,9 +610,7 @@ export function useCurrency() {
   if (!context) {
 
     throw new Error(
-
-      'useCurrency must be used within CurrencyProvider'
-
+      "useCurrency must be used within CurrencyProvider"
     );
   }
 

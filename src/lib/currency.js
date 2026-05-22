@@ -19,6 +19,22 @@
 export const DEFAULT_CURRENCY_SYMBOL = '₹';
 export const DEFAULT_CURRENCY_CODE = 'INR';
 
+export const FALLBACK_CURRENCY_SYMBOLS = {
+  INR: '\u20B9',
+  USD: '$',
+  EUR: '\u20AC',
+  GBP: '\u00A3',
+  CAD: 'C$',
+  AUD: 'A$',
+  NZD: 'NZ$',
+  SGD: 'S$',
+  JPY: '\u00A5',
+};
+
+export function getCurrencySymbol(code = DEFAULT_CURRENCY_CODE, fallback = DEFAULT_CURRENCY_SYMBOL) {
+  return FALLBACK_CURRENCY_SYMBOLS[String(code || '').toUpperCase()] || fallback || DEFAULT_CURRENCY_SYMBOL;
+}
+
 /**
  * Legacy format price function (INR only)
  * Used as fallback when CurrencyContext is not available
@@ -27,20 +43,24 @@ export const DEFAULT_CURRENCY_CODE = 'INR';
  * @param {number} value Price value
  * @returns {string} Formatted price with INR symbol
  */
-export function formatPrice(value) {
-  if (value == null) return `${DEFAULT_CURRENCY_SYMBOL}0`;
+export function formatCurrency(value, symbol = DEFAULT_CURRENCY_SYMBOL, currency = DEFAULT_CURRENCY_CODE) {
+  if (value == null) return `${symbol || DEFAULT_CURRENCY_SYMBOL}0`;
   
   // Parse value if it's a string
   const num = typeof value === 'number' 
     ? value 
     : parseFloat(String(value).replace(/[^0-9.\-]/g, '')) || 0;
   
-  // Remove decimals for whole numbers, otherwise show two decimals
-  const formatted = Number.isInteger(num) 
-    ? num.toString() 
-    : num.toFixed(2);
+  const formatted = num.toLocaleString(currency === 'INR' ? 'en-IN' : 'en-US', {
+    minimumFractionDigits: Number.isInteger(num) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
   
-  return `${DEFAULT_CURRENCY_SYMBOL}${formatted}`;
+  return `${symbol || DEFAULT_CURRENCY_SYMBOL}${formatted}`;
+}
+
+export function formatPrice(value) {
+  return formatCurrency(value, DEFAULT_CURRENCY_SYMBOL, DEFAULT_CURRENCY_CODE);
 }
 
 /**
@@ -63,6 +83,108 @@ export function formatPriceWithSymbol(value, symbol = DEFAULT_CURRENCY_SYMBOL, d
     : num.toFixed(decimals);
   
   return `${symbol}${formatted}`;
+}
+
+export function getINRPrice(item = {}) {
+  return Number(
+    item.price_inr ??
+      item.original_price ??
+      item.price ??
+      item.offer_price_inr ??
+      item.regular_price ??
+      0
+  ) || 0;
+}
+
+export function getDisplayPrice(item = {}, convertPrice = (value) => value, currency = item.currency) {
+  // Try to use API-provided converted price first (most accurate, backend already did the math)
+  const converted = item.converted_price ?? item.price_converted;
+  const itemCurrency = item.currency || item.currency_code;
+  
+  // Use API converted price if:
+  // 1. It exists and is a valid number
+  // 2. AND either: no target currency specified OR currencies match
+  if (
+    converted !== undefined &&
+    converted !== null &&
+    converted !== '' &&
+    (
+      !currency || 
+      !itemCurrency || 
+      String(itemCurrency).toUpperCase() === String(currency).toUpperCase()
+    )
+  ) {
+    const parsed = Number(converted);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[getDisplayPrice] Using API converted_price:', { parsed, currency, itemCurrency });
+      }
+      return parsed;
+    }
+  }
+
+  // Fallback: use convertPrice function with INR price
+  const inrPrice = getINRPrice(item);
+  const result = convertPrice(inrPrice);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[getDisplayPrice] Using convertPrice function:', { inrPrice, result, currency });
+  }
+  return result;
+}
+
+export function formatDisplayPrice(item = {}, currencyContext = {}) {
+  // Determine target currency code
+  const code = currencyContext.currency || item.currency || DEFAULT_CURRENCY_CODE;
+  
+  // Try to get symbol from multiple sources in order of preference:
+  // 1. API response (most accurate, backend knows the exact currency)
+  // 2. Context (may be INR by default)
+  // 3. Currency helper function
+  let symbol;
+  
+  // Check if item has currency_symbol from API
+  if (item.currency_symbol) {
+    symbol = item.currency_symbol;
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[formatDisplayPrice] Using API currency_symbol:', symbol);
+    }
+  } else {
+    // Fall back to context symbol or look it up
+    symbol = currencyContext.symbol || getCurrencySymbol(code);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[formatDisplayPrice] Using context/lookup symbol:', symbol);
+    }
+  }
+  
+  // Get convertPrice function (has fallback that just returns value unchanged)
+  const convertPrice = currencyContext.convertPrice || ((value) => value);
+  
+  // Calculate display price
+  const displayPrice = getDisplayPrice(item, convertPrice, code);
+  
+  // Format with the determined symbol
+  const formatted = formatCurrency(displayPrice, symbol, code);
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[formatDisplayPrice] Final result:', { formatted, displayPrice, symbol, code });
+  }
+  
+  return formatted;
+}
+
+export function createCartItem(item = {}) {
+  const priceINR = getINRPrice(item);
+  return {
+    id: item.id ?? item.product_id,
+    title: item.title || item.name || item.product_name,
+    name: item.name || item.title || item.product_name,
+    price: priceINR,
+    price_inr: priceINR,
+    image: item.image || item.image_url,
+    image_url: item.image_url || item.image,
+    slug: item.slug,
+    author: item.author || item.seller_name,
+  };
 }
 
 /**

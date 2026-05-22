@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { getTemplateUrl } from '../lib/slug';
 import productStore from '../lib/productStore';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { formatDisplayPrice } from '../lib/currency';
 
 export default function TemplateCard({
   item,
@@ -12,7 +13,7 @@ export default function TemplateCard({
 }) {
   const navigate = useNavigate();
   const [showQuick, setShowQuick] = React.useState(false);
-  const { formatPrice, convertPrice } = useCurrency();
+  const currencyContext = useCurrency();
 
   const openProduct = () => {
     productStore.set(item);
@@ -38,9 +39,7 @@ export default function TemplateCard({
     return () => window.removeEventListener('keydown', onKey);
   }, [showQuick]);
 
-  // Get the price to display (converted if multi-currency, original if INR only)
-  const priceINR = item.price_inr || item.price;
-  const displayPrice = formatPrice(convertPrice(priceINR));
+  const displayPrice = formatDisplayPrice(item, currencyContext);
 
   return (
     <article className="tf-card tf-card-equal">

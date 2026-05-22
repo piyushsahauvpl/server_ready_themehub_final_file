@@ -32,6 +32,11 @@ require_once '../helpers/currency-helper.php';
 ob_end_clean();
  
 try {
+    $requestedCurrency = strtoupper(trim($_GET['currency'] ?? ''));
+    if ($requestedCurrency && preg_match('/^[A-Z]{3}$/', $requestedCurrency)) {
+        setUserCurrency($requestedCurrency);
+    }
+
     // Get currency information for user
     $currencyInfo = getCurrencyInfo();
     $userCurrency = $currencyInfo['currency'];
@@ -117,10 +122,14 @@ try {
             // Add currency conversion for single product
             $priceINR = floatval($product['price']);
             $product['price_inr'] = $priceINR;
-            $product['price'] = convertCurrency($priceINR, $userCurrency);
+            $product['price'] = $priceINR;
+            $product['converted_price'] = convertCurrency($priceINR, $userCurrency);
+            $product['currency'] = $userCurrency;
+            $product['currency_symbol'] = $userSymbol;
             if ($product['offer_price']) {
                 $product['offer_price_inr'] = floatval($product['offer_price']);
-                $product['offer_price'] = convertCurrency(floatval($product['offer_price']), $userCurrency);
+                $product['offer_price'] = $product['offer_price_inr'];
+                $product['converted_offer_price'] = convertCurrency($product['offer_price_inr'], $userCurrency);
             }
             
             echo json_encode([
@@ -223,10 +232,14 @@ try {
                 'name' => $row['name'],
                 'slug' => $row['slug'],
                 'description' => $row['description'],
-                'price' => $priceConverted,  // Converted price
+                'price' => $priceINR,
                 'price_inr' => $priceINR,     // Original INR price
-                'old_price' => $oldPriceConverted,
+                'converted_price' => $priceConverted,
+                'currency' => $userCurrency,
+                'currency_symbol' => $userSymbol,
+                'old_price' => $row['offer_price'] ? floatval($row['offer_price']) : null,
                 'old_price_inr' => $row['offer_price'] ? floatval($row['offer_price']) : null,
+                'converted_old_price' => $oldPriceConverted,
                 'image' => $row['image_url'],
                 'image_url' => $row['image_url'],
                 'preview_url' => $row['preview_url'],

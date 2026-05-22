@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { CartContext } from '../components/CartContext'
+import { useCurrency } from '../contexts/CurrencyContext'
+import { createCartItem, formatDisplayPrice } from '../lib/currency'
 import productStore from '../lib/productStore'
 import { getTemplateUrl } from '../lib/slug'
 import '../assets/css/templates-scroll.css'
@@ -15,6 +17,8 @@ export default function AllCategoriesPage(){
   const navigate = useNavigate();
   const location = useLocation();
   const { addToCart } = useContext(CartContext);
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || 'INR';
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -54,7 +58,7 @@ export default function AllCategoriesPage(){
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}/products.php`);
+        const res = await fetch(`${API_URL}/products.php?currency=${encodeURIComponent(activeCurrency)}`, { credentials: 'include' });
         const data = await res.json();
         let filtered = data.data || [];
 
@@ -75,7 +79,7 @@ export default function AllCategoriesPage(){
       }
     };
     fetchProducts();
-  }, [selectedCategory]);
+  }, [selectedCategory, activeCurrency]);
 
   const handleCategoryClick = (cat) => {
     setSelectedCategory(cat);
@@ -409,7 +413,7 @@ export default function AllCategoriesPage(){
                 <div className="th-overlay">
                   <button>Preview</button>
                 </div>
-                <span className="th-price">₹{item.price}</span>
+                <span className="th-price">{formatDisplayPrice(item, currencyContext)}</span>
               </div>
 
               <div className="th-body">
@@ -423,7 +427,7 @@ export default function AllCategoriesPage(){
                     className="th-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      addToCart(item);
+                      addToCart(createCartItem(item));
                       e.target.innerText = "✓ Added!";
                       setTimeout(()=> e.target.innerText="Add to Cart",1500);
                     }}

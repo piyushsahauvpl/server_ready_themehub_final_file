@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../components/CartContext';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { getINRPrice } from '../lib/currency';
 import {
   FiLock,
   FiCheck,
@@ -14,7 +15,7 @@ import {
 export default function Payment() {
   const navigate = useNavigate();
   const { cart, clearCart } = useContext(CartContext);
-  const { formatPrice, convertPrice, symbol, currency } = useCurrency();
+  const { formatPrice, convertPrice, currency } = useCurrency();
 
   const [user, setUser] = useState(null);
   const [processing, setProcessing] = useState(false);
@@ -48,7 +49,7 @@ export default function Payment() {
 
   // ✅ Correct calculation - use price_inr if available
   const subtotalINR = cart.reduce(
-    (sum, item) => sum + Number(item.price_inr || item.price || 0) * (item.qty || 1),
+    (sum, item) => sum + getINRPrice(item) * (item.qty || 1),
     0
   );
 
@@ -263,7 +264,7 @@ export default function Payment() {
             {cart.map(item => (
               <div key={item.id} className="flex justify-between mb-2">
                 <span>{item.title} x{item.qty || 1}</span>
-                <span>{formatPrice(convertPrice(item.price_inr || item.price))}</span>
+                <span>{formatPrice(convertPrice(getINRPrice(item)))}</span>
               </div>
             ))}
 

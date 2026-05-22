@@ -5,13 +5,16 @@ import { getTemplateUrl } from "../lib/slug";
 import "../assets/css/style.css";
 import "./ItemsSection.css";
 import { CartContext } from "../components/CartContext";
+import { useCurrency } from "../contexts/CurrencyContext";
+import { createCartItem, formatDisplayPrice, getINRPrice } from "../lib/currency";
 import productStore from "../lib/productStore";
-import { formatPrice } from "../lib/currency";
 import { Helmet } from "./SeoHelmet"; 
 
 export default function ItemsSection({ showHeader = true }) {
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || "INR";
   const [selectedType, setSelectedType] = useState("all");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,13 +30,15 @@ export default function ItemsSection({ showHeader = true }) {
       process.env.REACT_APP_API_URL ||
       "https://uptulathemehub.com/backend/api";
 
-    let apiUrl = `${API_BASE}/products.php`;
+    let apiUrl = `${API_BASE}/products.php?currency=${encodeURIComponent(activeCurrency)}`;
 
     if (selectedType !== "all") {
-      apiUrl += `?framework=${encodeURIComponent(selectedType)}`;
+      apiUrl += `&framework=${encodeURIComponent(selectedType)}`;
     }
 
-    fetch(apiUrl)
+    console.log('[ItemsSection] Fetching with URL:', apiUrl);
+
+    fetch(apiUrl, { credentials: "include" })
       .then((res) => res.json())
       .then((resp) => {
         const list = Array.isArray(resp)
@@ -41,6 +46,14 @@ export default function ItemsSection({ showHeader = true }) {
           : resp && resp.data
             ? resp.data
             : [];
+
+        console.log('[ItemsSection] API Response:', { 
+          listLength: list.length, 
+          firstItemCurrency: list[0]?.currency, 
+          firstItemSymbol: list[0]?.currency_symbol,
+          firstItemPrice: list[0]?.price,
+          firstItemConverted: list[0]?.converted_price
+        });
 
         setItems(list);
         setLoading(false);
@@ -50,7 +63,7 @@ export default function ItemsSection({ showHeader = true }) {
         setItems([]);
         setLoading(false);
       });
-  }, [selectedType]);
+  }, [selectedType, activeCurrency]);
 
   const computeScrollAmount = useCallback(() => {
     const container = containerRef.current;
@@ -85,15 +98,7 @@ export default function ItemsSection({ showHeader = true }) {
   const scrollRight = () =>
     containerRef.current?.scrollBy({ left: scrollAmount, behavior: 'smooth' });
 
-  const getPrice = (item) =>
-    Number(
-      (item.price ??
-        item.offer_price ??
-        item.old_price ??
-        item.sale_price ??
-        item.regular_price) ||
-        0,
-    );
+  const getPrice = (item) => getINRPrice(item);
 
   const openTemplate = (item) => {
     productStore.set({ ...item, image: item.image_url });
@@ -225,7 +230,7 @@ export default function ItemsSection({ showHeader = true }) {
 
                   <div className="ra-meta-row">
                     <p>{getCategoryText(item)}</p>
-                    <span className="ra-price">{formatPrice(getPrice(item))}</span>
+                    <span className="ra-price">{formatDisplayPrice(item, currencyContext)}</span>
                   </div>
 
                   <div className="ra-bottom">
@@ -246,12 +251,7 @@ export default function ItemsSection({ showHeader = true }) {
                       onClick={(e) => {
                         e.stopPropagation();
 
-                        addToCart({
-                          id: item.id,
-                          title: item.name,
-                          price: getPrice(item),
-                          image: item.image || item.image_url,
-                        });
+                        addToCart(createCartItem(item));
                       }}
                       aria-label={`Add ${item.name || "template"} to cart`}
                     >

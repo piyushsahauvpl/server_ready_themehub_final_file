@@ -26,6 +26,8 @@ header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../config/database.php';
+require_once '../config/currency-config.php';
+require_once '../helpers/currency-helper.php';
 
 ob_end_clean();
 
@@ -36,6 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 try {
+    $requestedCurrency = strtoupper(trim($_GET['currency'] ?? ''));
+    if ($requestedCurrency && preg_match('/^[A-Z]{3}$/', $requestedCurrency)) {
+        setUserCurrency($requestedCurrency);
+    }
+
+    $currencyInfo = getCurrencyInfo();
+    $userCurrency = $currencyInfo['currency'];
+    $userSymbol = $currencyInfo['symbol'];
     $conn = getDBConnection();
 
     // Check if is_featured column exists
@@ -72,6 +82,9 @@ try {
             $row['image_url'] = 'https://uptulathemehub.com' . ($row['image_url'][0] === '/' ? $row['image_url'] : '/' . $row['image_url']);
         }
         
+        $priceINR = floatval($row['price']);
+        $oldPriceINR = $row['offer_price'] ? floatval($row['offer_price']) : null;
+
         // Map to expected format for frontend
         $products[] = [
             'id' => $row['id'],
@@ -79,8 +92,14 @@ try {
             'name' => $row['name'],
             'slug' => $row['slug'],
             'description' => $row['description'],
-            'price' => floatval($row['price']),
-            'old_price' => $row['offer_price'] ? floatval($row['offer_price']) : null,
+            'price' => $priceINR,
+            'price_inr' => $priceINR,
+            'converted_price' => convertCurrency($priceINR, $userCurrency),
+            'currency' => $userCurrency,
+            'currency_symbol' => $userSymbol,
+            'old_price' => $oldPriceINR,
+            'old_price_inr' => $oldPriceINR,
+            'converted_old_price' => $oldPriceINR !== null ? convertCurrency($oldPriceINR, $userCurrency) : null,
             'image' => $row['image_url'],
             'image_url' => $row['image_url'],
             'preview_url' => $row['preview_url'],
@@ -95,7 +114,16 @@ try {
     }
     
     closeDBConnection($conn);
-    echo json_encode(['success' => true, 'data' => $products]);
+    echo json_encode([
+        'success' => true,
+        'data' => $products,
+        'currency' => [
+            'code' => $userCurrency,
+            'symbol' => $userSymbol,
+            'country' => $currencyInfo['country'],
+            'is_manual' => $currencyInfo['is_manual']
+        ]
+    ]);
 } catch (Exception $e) {
     error_log("Featured products API error: " . $e->getMessage());
     closeDBConnection($conn);

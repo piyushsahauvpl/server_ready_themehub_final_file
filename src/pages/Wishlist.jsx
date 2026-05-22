@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiHeart, FiShoppingCart, FiTrash2, FiEye, FiLoader, FiAlertCircle } from 'react-icons/fi';
 import { CartContext } from '../components/CartContext';
+import { useCurrency } from '../contexts/CurrencyContext';
+import { createCartItem, formatDisplayPrice } from '../lib/currency';
 import Footer from '../components/Footer';
 import { getTemplateUrl } from '../lib/slug';
 import '../assets/css/style.css';
@@ -9,6 +11,8 @@ import '../assets/css/style.css';
 export default function Wishlist() {
   const navigate = useNavigate();
   const { addToCart } = React.useContext(CartContext);
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || 'INR';
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -18,7 +22,7 @@ export default function Wishlist() {
 
   useEffect(() => {
     checkAuthAndFetch();
-  }, []);
+  }, [activeCurrency]);
 
   const checkAuthAndFetch = async () => {
     try {
@@ -40,7 +44,7 @@ export default function Wishlist() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${API_URL}/wishlist.php`, { credentials: 'include' });
+      const res = await fetch(`${API_URL}/wishlist.php?currency=${encodeURIComponent(activeCurrency)}`, { credentials: 'include' });
       const data = await res.json();
       
       if (data.success && data.items) {
@@ -322,7 +326,7 @@ export default function Wishlist() {
                           fontWeight: '700',
                           color: '#04733c'
                         }}>
-                          ₹{Number(item.price || 0).toFixed(2)}
+                          {formatDisplayPrice(item, currencyContext)}
                         </div>
                         <div style={{ display: 'flex', gap: '8px' }}>
                           {item.preview_url && (
@@ -358,12 +362,7 @@ export default function Wishlist() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              addToCart({
-                                id: item.product_id,
-                                title: item.product_name,
-                                price: Number(item.price || 0),
-                                image: item.image_url
-                              });
+                              addToCart(createCartItem(item));
                             }}
                             style={{
                               padding: '8px 16px',

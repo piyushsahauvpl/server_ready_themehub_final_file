@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { formatPrice } from '../lib/currency';
+import { useCurrency } from '../contexts/CurrencyContext';
+import { createCartItem, formatDisplayPrice, getINRPrice } from '../lib/currency';
 import firstImg from '../assets/images/first.png';
 import secondImg from '../assets/images/second.png';
 import bannerImg from '../assets/images/banner-img.png';
 
 export default function Features() {
+  const currencyContext = useCurrency();
+  
   const templates = [
     { id: 1, title: 'Dashboard Pro', author: 'ThemeHub', price: 49, image: firstImg },
     { id: 2, title: 'Landing Page', author: 'CreativeStudio', price: 29, image: secondImg },
@@ -31,7 +34,10 @@ export default function Features() {
     saveCart(cart.filter(i => i.id !== id));
   };
 
-  const getTotal = () => cart.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+  const getTotal = () => {
+    const total = cart.reduce((s, it) => s + getINRPrice(it) * (it.qty || 1), 0);
+    return currencyContext.convertPrice(total);
+  };
 
   const showNotification = (msg, type = 'info') => {
     setNotification({ msg, type });
@@ -44,7 +50,7 @@ export default function Features() {
       const next = cart.map(i => i.id === item.id ? { ...i, qty: (i.qty || 1) + 1 } : i);
       saveCart(next);
     } else {
-      saveCart([...cart, { ...item, qty: 1 }]);
+      saveCart([...cart, { ...createCartItem(item), qty: 1 }]);
     }
     showNotification(`${item.title} added to cart`, 'success');
   };
@@ -88,7 +94,7 @@ export default function Features() {
                     <h4 style={{margin:0}}>{t.title}</h4>
                     <p style={{margin:'6px 0',color:'#6b7280'}}>by {t.author}</p>
                     <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                      <strong>{formatPrice(t.price)}</strong>
+                      <strong>{formatDisplayPrice(t, currencyContext)}</strong>
                       <button className="btn" onClick={() => addToCart(t)} style={{padding:'8px 12px'}}>Add to cart</button>
                     </div>
                   </div>
@@ -117,7 +123,7 @@ export default function Features() {
                     <div style={{fontWeight:600}}>{item.title}</div>
                     <div style={{fontSize:12,color:'#6b7280'}}>by {item.author}</div>
                   </div>
-                  <div style={{minWidth:60,textAlign:'right'}}>{formatPrice(item.price)}</div>
+                  <div style={{minWidth:60,textAlign:'right'}}>{formatDisplayPrice(item, currencyContext)}</div>
                   <button className="remove-btn" onClick={() => removeItem(item.id)} style={{marginLeft:8}} title="Remove">🗑</button>
                 </div>
               ))}
@@ -126,11 +132,11 @@ export default function Features() {
             <div style={{Padding:8,display:'flex',flexDirection:'column',gap:8,border:'1px solid rgba(0,0,0,0.04)',borderRadius:6}}>
               <div style={{display:'flex',justifyContent:'space-between'}}>
                 <span>Subtotal</span>
-                <strong id="subtotal">{formatPrice(getTotal())}</strong>
+                <strong id="subtotal">{currencyContext.formatPrice(getTotal())}</strong>
               </div>
               <div style={{display:'flex',justifyContent:'space-between'}}>
                 <span>Total</span>
-                <strong id="total">{formatPrice(getTotal())}</strong>
+                <strong id="total">{currencyContext.formatPrice(getTotal())}</strong>
               </div>
               <div style={{display:'flex',gap:8}}>
                 <button id="checkoutBtn" className="btn" onClick={() => showNotification('Checkout functionality - Demo only', 'info')} style={{flex:1}}>Checkout</button>

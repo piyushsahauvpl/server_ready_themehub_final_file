@@ -2,12 +2,13 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
 import { useCurrency } from "../contexts/CurrencyContext";
+import { getINRPrice } from "../lib/currency";
  
 export default function CartPage({ onNavigate }) {
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQty, clearCart } =
     useContext(CartContext);
-  const { formatPrice, convertPrice, symbol, currency } = useCurrency();
+  const { formatPrice, convertPrice, currency } = useCurrency();
  
   // State hooks must be called at the top level, before any returns
   const [placingOrder, setPlacingOrder] = React.useState(false);
@@ -48,7 +49,7 @@ export default function CartPage({ onNavigate }) {
  
   // Calculate subtotal using price_inr if available (original price)
   const subtotalINR = cart.reduce(
-    (sum, item) => sum + (item.price_inr || item.price || 0) * (item.qty || 1),
+    (sum, item) => sum + getINRPrice(item) * (item.qty || 1),
     0
   );
   
@@ -114,7 +115,7 @@ export default function CartPage({ onNavigate }) {
 
               <div className="cart-actions">
                 <div className="cart-item-price">
-                  {formatPrice(convertPrice(item.price_inr || item.price))}
+                  {formatPrice(convertPrice(getINRPrice(item)))}
                 </div>
 
                 {/* QTY CONTROLS */}

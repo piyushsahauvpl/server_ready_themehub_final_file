@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getTemplateUrl } from "../lib/slug";
+import { useCurrency } from "../contexts/CurrencyContext";
 import {
   FiUser,
   FiMail,
@@ -28,6 +29,7 @@ import SellerDashboard from "../seller/SellerDashboard";
 export default function Profile() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const { formatPrice, convertPrice } = useCurrency();
 
   const API_URL =
     process.env.REACT_APP_API_URL ||
@@ -304,24 +306,24 @@ export default function Profile() {
               <tr>
                 <td>${invoiceTitle}</td>
                 <td>#${purchase.product_id || "N/A"}</td>
-                <td>₹${totalAmount.toFixed(2)}</td>
+                <td>{formatPrice(convertPrice(totalAmount))}</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td></td>
                 <td><strong>Subtotal</strong></td>
-                <td><strong>₹${calculatedSubtotal.toFixed(2)}</strong></td>
+                <td><strong>{formatPrice(convertPrice(calculatedSubtotal))}</strong></td>
               </tr>
               <tr>
                 <td></td>
                 <td><strong>GST (${taxRate.toFixed(0)}%)</strong></td>
-                <td><strong>₹${taxAmount.toFixed(2)}</strong></td>
+                <td><strong>{formatPrice(convertPrice(taxAmount))}</strong></td>
               </tr>
               <tr class="summary-row">
                 <td></td>
                 <td><strong>Total</strong></td>
-                <td><strong>₹${totalAmount.toFixed(2)}</strong></td>
+                <td><strong>{formatPrice(convertPrice(totalAmount))}</strong></td>
               </tr>
             </tfoot>
           </table>
@@ -833,10 +835,7 @@ if (isActive) {
                                     })}
                                   </span>
                                   <span className="flex items-center gap-1">
-                                    <span className="text-gray-500">₹</span>
-                                    {parseFloat(purchase.amount || 0).toFixed(
-                                      2,
-                                    )}
+                                    {formatPrice(convertPrice(parseFloat(purchase.amount || 0)))}
                                   </span>
                                   {purchase.product_id && (
                                     <span className="flex items-center gap-1 text-gray-500">

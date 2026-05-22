@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { CartContext } from "../components/CartContext";
-import { formatPrice } from "../lib/currency";
+import { createCartItem, formatDisplayPrice } from "../lib/currency";
+import { useCurrency } from "../contexts/CurrencyContext";
 
 function List (){
   const [templates, setTemplates] = useState([]);
@@ -13,10 +14,12 @@ function List (){
   const params = new URLSearchParams(location.search);
   const categoryParam = params.get('category') || 'all';
   const { addToCart } = useContext(CartContext);
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || 'INR';
 
   useEffect(() => {
     setLoading(true);
-    fetch('https://uptulathemehub.com/backend/api/products.php')
+    fetch(`https://uptulathemehub.com/backend/api/products.php?currency=${encodeURIComponent(activeCurrency)}`, { credentials: 'include' })
       .then((res) => res.json())
       .then((json) => {
         const list = Array.isArray(json.data) ? json.data : (Array.isArray(json) ? json : []);
@@ -28,7 +31,7 @@ function List (){
         setTemplates([]);
         setLoading(false);
       });
-  }, []);
+  }, [activeCurrency]);
 
   const categories = useMemo(() => {
     const cats = templates.flatMap((t) => t.tags || []).filter(Boolean);
@@ -256,7 +259,7 @@ function List (){
                   <h3 className="template-title">{template.title || template.name}</h3>
                   <p className="template-author">by {template.author || 'ThemeHub'}</p>
                 </div>
-                <div className="template-price">{formatPrice(template.price)}</div>
+                <div className="template-price">{formatDisplayPrice(template, currencyContext)}</div>
               </div>
 
               <p className="template-description">{template.description}</p>
@@ -278,7 +281,7 @@ function List (){
                     padding: "0.5rem 1rem",
                     fontSize: "0.85rem",
                   }}
-                  onClick={() => addToCart({ id: template.id, title: template.title || template.name, price: Number(template.offer_price ?? template.price ?? 0), image: template.image })}
+                  onClick={() => addToCart(createCartItem(template))}
                 >
                   <i className="fas fa-shopping-cart" /> Add to Cart
                 </button>
@@ -350,7 +353,7 @@ function List (){
               <h3 className="template-title">Medical &amp; Health</h3>
               <p className="template-author">by HealthTemplates</p>
             </div>
-            <div className="template-price">₹55</div>
+            <div className="template-price">{formatDisplayPrice({ price: 55, price_inr: 55 }, currencyContext)}</div>
           </div>
           <p className="template-description">
             Professional medical website with appointment booking, doctor

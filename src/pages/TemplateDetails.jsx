@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { CartContext } from '../components/CartContext';
+import { useCurrency } from '../contexts/CurrencyContext';
+import { createCartItem, formatDisplayPrice } from '../lib/currency';
 import { FiStar, FiHeart, FiShoppingCart, FiEye, FiCheckCircle, FiDownload, FiClock, FiMessageCircle, FiUser, FiHelpCircle } from 'react-icons/fi';
 import TicketModal from '../components/TicketModal';
 
@@ -406,6 +408,8 @@ function TemplateDetails(){
   const { slug } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || 'INR';
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -496,7 +500,7 @@ function TemplateDetails(){
     finally { setDeletingReviewId(null); }
   };
 
-  useEffect(() => { checkAuth(); fetchProduct(); fetchReviews(); }, [slug]);
+  useEffect(() => { checkAuth(); fetchProduct(); fetchReviews(); }, [slug, activeCurrency]);
   useEffect(() => { window.scrollTo(0, 0); }, [slug]);
   useEffect(() => { if (product && currentUser) checkWishlist(); }, [product, currentUser]);
   useEffect(() => { if (product) fetchReviews(); }, [product]);
@@ -545,7 +549,7 @@ function TemplateDetails(){
   const fetchProduct = async () => {
     setLoading(true); setError('');
     try {
-      const res = await fetch(`${API_URL}/products.php?id=${encodeURIComponent(slug)}`);
+      const res = await fetch(`${API_URL}/products.php?id=${encodeURIComponent(slug)}&currency=${encodeURIComponent(activeCurrency)}`, { credentials: 'include' });
       const data = await res.json();
       if (data.success && data.data) setProduct(data.data);
       else setError('Product not found');
@@ -579,7 +583,7 @@ function TemplateDetails(){
   };
 
   const handleAddToCart = () => {
-    addToCart({ id: tpl?.id, title: tpl?.title, price: Number(tpl?.price ?? 0), image: tpl?.image });
+    addToCart(createCartItem(tpl));
     setCartAdded(true);
     setTimeout(() => setCartAdded(false), 1500);
   };
@@ -611,7 +615,13 @@ function TemplateDetails(){
     title: product.name || product.title,
     author: product.seller_name || product.seller_full_name || 'Admin',
     price: product.price,
+    price_inr: product.price_inr,
+    converted_price: product.converted_price,
+    currency: product.currency,
+    currency_symbol: product.currency_symbol,
     old_price: product.offer_price,
+    old_price_inr: product.offer_price_inr,
+    converted_old_price: product.converted_offer_price || product.converted_old_price,
     image: product.image_url,
     description: product.description || '',
     preview_url: product.preview_url,
@@ -1035,9 +1045,15 @@ function TemplateDetails(){
                 <div className="td-purchase-card">
                   <div className="td-price-block">
                     <div>
-                      <div className="td-price-main">₹{Number(tpl.price || 0).toLocaleString('en-IN')}</div>
+                      <div className="td-price-main">{formatDisplayPrice(tpl, currencyContext)}</div>
                       <div className="td-price-sub">
-                        {tpl.old_price && <span className="td-price-old">₹{Number(tpl.old_price).toLocaleString('en-IN')}</span>}
+                        {tpl.old_price && <span className="td-price-old">{formatDisplayPrice({
+                          price: tpl.old_price,
+                          price_inr: tpl.old_price_inr || tpl.old_price,
+                          converted_price: tpl.converted_old_price,
+                          currency: tpl.currency,
+                          currency_symbol: tpl.currency_symbol,
+                        }, currencyContext)}</span>}
                         {discountPct && <span className="td-price-off">{discountPct}% OFF</span>}
                       </div>
                     </div>

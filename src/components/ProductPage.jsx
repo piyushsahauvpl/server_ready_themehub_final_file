@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiHeart } from "react-icons/fi";
 import { useCurrency } from "../contexts/CurrencyContext";
+import { createCartItem, formatDisplayPrice } from "../lib/currency";
 import productStore from "../lib/productStore";
 import cartManager from "../lib/cartManager";
 import { openPreviewForTemplate } from "../lib/preview";
@@ -21,11 +22,8 @@ export default function ProductPage() {
 
   const [loading, setLoading] = useState(false);
 
-  const {
-    formatPrice,
-    convertPrice,
-    currency
-  } = useCurrency();
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || 'INR';
 
   /**
    * Subscribe to product store updates
@@ -63,7 +61,7 @@ export default function ProductPage() {
             process.env.REACT_APP_API_URL ||
             "https://uptulathemehub.com/backend/api";
 
-          const API = `${API_URL}/products.php?id=${id}`;
+          const API = `${API_URL}/products.php?id=${encodeURIComponent(id)}&currency=${encodeURIComponent(activeCurrency)}`;
 
           const response = await fetch(API, {
             credentials: 'include'
@@ -100,7 +98,7 @@ export default function ProductPage() {
       loadProduct();
     }
 
-  }, [id, product]);
+  }, [id, product, activeCurrency]);
 
   /**
    * Redirect old product URLs to canonical template URL
@@ -165,13 +163,7 @@ export default function ProductPage() {
    * SAFE PRICE HANDLING
    */
 
-  const priceINR = parseFloat(
-    product.price_inr || product.price || 0
-  );
-
-  const convertedPrice = convertPrice(priceINR);
-
-  const displayPrice = formatPrice(convertedPrice);
+  const displayPrice = formatDisplayPrice(product, currencyContext);
 
   /**
    * Add to cart
@@ -204,7 +196,7 @@ export default function ProductPage() {
 
     } catch (e) {}
 
-    cartManager.addItem(product);
+    cartManager.addItem(createCartItem(product));
   };
 
   return (
@@ -314,24 +306,6 @@ export default function ProductPage() {
                 {displayPrice}
 
               </div>
-
-              {/* SHOW ORIGINAL INR FOR FOREIGN USERS */}
-
-              {currency !== 'INR' && (
-
-                <div
-                  style={{
-                    fontSize: '12px',
-                    color: '#666',
-                    marginTop: '4px'
-                  }}
-                >
-
-                  Original Price:
-                  ₹{priceINR.toFixed(2)} INR
-
-                </div>
-              )}
 
               {/* BUTTONS */}
 

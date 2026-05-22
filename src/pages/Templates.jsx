@@ -2,6 +2,8 @@ import React, { useEffect, useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import productStore from "../lib/productStore";
 import { CartContext } from "../components/CartContext";
+import { useCurrency } from "../contexts/CurrencyContext";
+import { createCartItem, formatDisplayPrice } from "../lib/currency";
 import { getTemplateUrl } from "../lib/slug";
 import "./Templates.css";
 import { Helmet } from "../components/SeoHelmet"; 
@@ -52,8 +54,10 @@ function isTemplateMarkedNew(template) {
 }
 
 function Templates({ embed = false, initialCategory = null }) {
+  const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
-
+  const currencyContext = useCurrency();
+  const activeCurrency = currencyContext.currency || "INR";
   const [templates, setTemplates] = useState([]);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
   const [fetchError, setFetchError] = useState(null);
@@ -63,12 +67,21 @@ function Templates({ embed = false, initialCategory = null }) {
     const API_URL =
       process.env.REACT_APP_API_URL ||
       "https://uptulathemehub.com/backend/api";
-    const API = `${API_URL}/products.php`;
+    const API = `${API_URL}/products.php?currency=${encodeURIComponent(activeCurrency)}`;
+    console.log('[Templates] Fetching with API:', API);
     setLoadingTemplates(true);
     fetch(API, { credentials: "include" })
       .then((r) => r.json())
       .then((json) => {
         if (!mounted) return;
+        console.log('[Templates] API Response:', { 
+          success: json.success, 
+          dataLength: json.data?.length,
+          firstItemCurrency: json.data?.[0]?.currency,
+          firstItemSymbol: json.data?.[0]?.currency_symbol,
+          firstItemPrice: json.data?.[0]?.price,
+          firstItemConverted: json.data?.[0]?.converted_price
+        });
         if (json && json.success && Array.isArray(json.data)) {
           setTemplates(json.data);
           setFetchError(null);
@@ -79,14 +92,14 @@ function Templates({ embed = false, initialCategory = null }) {
       })
       .catch((err) => {
         if (!mounted) return;
+        console.error('[Templates] Fetch error:', err);
         setFetchError(err.message || "Fetch error");
         setTemplates([]);
       })
       .finally(() => mounted && setLoadingTemplates(false));
     return () => { mounted = false; };
-  }, []);
+  }, [activeCurrency]);
 
-  const navigate = useNavigate();
   useEffect(() => {
     window.__navigate__ = navigate;
     return () => { delete window.__navigate__; };
@@ -422,7 +435,7 @@ function Templates({ embed = false, initialCategory = null }) {
             <span style={{ position: "absolute", top: 14, left: 14, background: theme.accent, color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: 1, padding: "5px 11px", borderRadius: 999 }}>NEW</span>
           )}
           <span className="product-price" style={{ position: "absolute", top: 14, right: 14, background: theme.price, color: "#fff", fontWeight: 700, fontSize: 12, padding: "6px 14px", borderRadius: 999, boxShadow: "0 8px 22px rgba(0,0,0,.12)" }}>
-            ₹{t.price_display ?? Number(t.price || 0).toFixed(2)}
+            {formatDisplayPrice(t, currencyContext)}
           </span>
         </div>
 
@@ -450,7 +463,7 @@ function Templates({ embed = false, initialCategory = null }) {
           <button
             type="button"
             className="add-to-cart-btn"
-            onClick={() => addToCart({ id: t.id, title: t.title || t.name, price: Number(t.price || 0), image: t.image || t.image_url })}
+            onClick={() => addToCart(createCartItem(t))}
             style={{
               width: "100%", background: theme.btn, color: "#fff", border: `1px solid ${theme.btn}`,
               padding: "12px 16px", borderRadius: 8, fontWeight: 600, fontSize: 13,
@@ -495,7 +508,7 @@ function Templates({ embed = false, initialCategory = null }) {
               <p className="template-author" style={{ fontSize: 13, color: MUTED, margin: "6px 0 0" }}>by {t.seller_name || t.author || "Admin"}</p>
             </div>
             <div className="template-price" style={{ background: theme.price, color: "#fff", padding: "8px 16px", borderRadius: 999, fontWeight: 700, height: "fit-content" }}>
-              ₹{t.price_display ?? Number(t.price || 0).toFixed(2)}
+              {formatDisplayPrice(t, currencyContext)}
             </div>
           </div>
           <p className="template-description" style={{ color: MUTED, fontSize: 14, lineHeight: 1.7, margin: 0 }}>{t.description || "Premium template"}</p>
@@ -503,7 +516,7 @@ function Templates({ embed = false, initialCategory = null }) {
             <div className="meta-item rating" style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}><Stars rating={Number(t.rating ?? 0)} /></div>
             <div className="meta-item downloads" style={{ fontSize: 12, color: MUTED }}>{t.downloads || 0} downloads</div>
             <button type="button" className="btn add-to-cart-btn"
-              onClick={() => addToCart({ id: t.id, title: t.title || t.name, price: Number(t.price || 0), image: t.image || t.image_url })}
+              onClick={() => addToCart(createCartItem(t))}
               style={{ marginLeft: "auto", background: theme.btn, color: "#fff", border: `1px solid ${theme.btn}`, padding: "10px 20px", borderRadius: 999, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
               Add to Cart
             </button>

@@ -63,6 +63,12 @@ try {
     $action = $_GET['action'] ?? 'get-currency';
     
     if ($action === 'get-currency') {
+        if (!empty($_GET['currency'])) {
+            setUserCurrency($_GET['currency']);
+        } elseif (!empty($_GET['country']) && preg_match('/^[A-Z]{2}$/', $_GET['country'])) {
+            $_SESSION['user_country'] = $_GET['country'];
+        }
+
         // Get current currency information
         $currencyInfo = getCurrencyInfo();
         $exchangeRates = getExchangeRates();
@@ -91,11 +97,13 @@ try {
         
         // Validate and set currency
         if (setUserCurrency($currency)) {
+            $exchangeRates = getExchangeRates();
             http_response_code(200);
             echo json_encode([
                 'success' => true,
                 'message' => 'Currency updated',
-                'data' => getCurrencyInfo()
+                'data' => getCurrencyInfo(),
+                'exchange_rates' => $exchangeRates
             ]);
         } else {
             http_response_code(400);
@@ -127,8 +135,11 @@ try {
             'success' => true,
             'data' => [
                 'price_inr' => round($price, 2),
+                'price' => round($price, 2),
+                'converted_price' => $converted,
                 'price_converted' => $converted,
                 'currency' => $currency,
+                'currency_symbol' => $symbol,
                 'symbol' => $symbol
             ]
         ]);
